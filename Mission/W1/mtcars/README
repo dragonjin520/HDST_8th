@@ -1,0 +1,8 @@
+# 학습 목표
+mtcars 데이터셋을 분석하고 그래프를 그리는 방법을 배웁니다.
+
+Jupyter notebook의 기본 사용법을 배웁니다.
+
+pandas의 DataFrame의 기본 사용법을 배웁니다.
+
+matplotlib로 그래프를 그리는 방법을 배웁니다.
