@@ -5,7 +5,13 @@ from urllib.request import Request, urlopen
 
 import pandas as pd
 from bs4 import BeautifulSoup
+
+
 import country_converter as coco
+# country_converter는 국가명을 표준화하거나,
+# 국가명을 기준으로 대륙(continent), ISO 코드 등을 변환해주는 외부 라이브러리이다.
+# 이번 과제의 GDP 원본 테이블에는 Region 컬럼이 없기 때문에,
+# 국가명(Country)을 기준으로 Region 정보를 추가하기 위해 사용한다.
 
 
 # =========================
@@ -322,3 +328,6 @@ if __name__ == "__main__":
 
     print("\nDB 저장 결과 확인")
     print(sql_result.to_string(index=False))
+
+
+    
