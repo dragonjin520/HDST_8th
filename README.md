@@ -16,6 +16,7 @@ retrospectives/
 ```
 
 ## Missions
-- [W1M1](./missions/w1m1)
-- [W1M2](./missions/w1m2)
-- [W1M3](./missions/w1m3)
+
+- [W1M1](./missions/W1/mission1_mtcars)
+- [W1M2](./missions/W1/mission2_SQL)
+- [W1M3](./missions/W1/mission3_ETL)
