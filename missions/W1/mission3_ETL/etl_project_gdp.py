@@ -123,18 +123,9 @@ def extract(url):
 
     raw_df = pd.DataFrame(data)
 
-    # Extract한 원본 정보를 JSON 파일로 저장한다.
-    raw_df.to_json(
-        JSON_PATH,
-        orient="records",
-        indent=4,
-        force_ascii=False
-    )
-
     log_progress("Extract phase Ended")
 
     return raw_df
-
 
 # =========================
 # Transform
@@ -202,7 +193,21 @@ def transform(raw_df):
 
     return gdp_df
 
+def save_to_json(df, json_path):
+    """
+    Transform까지 완료된 최종 데이터를 JSON 파일로 저장한다.
+    """
+    log_progress("Save to JSON Started")
 
+    df.to_json(
+        json_path,
+        orient="records",
+        indent=4,
+        force_ascii=False
+    )
+
+    log_progress("Save to JSON Ended")
+    
 # =========================
 # Load
 # =========================
@@ -299,6 +304,8 @@ def run_etl_pipeline():
 
     raw_df = extract(URL)
     transformed_df = transform(raw_df)
+
+    save_to_json(transformed_df, JSON_PATH)
 
     load_to_database(
         transformed_df,

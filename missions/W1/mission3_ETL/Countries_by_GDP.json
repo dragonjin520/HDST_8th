@@ -1,886 +1,977 @@
 [
     {
         "Country":"United States",
-        "GDP_USD_million":"32,383,920"
+        "Region":"America",
+        "GDP_USD_billion":32383.92
     },
     {
         "Country":"China",
-        "GDP_USD_million":"20,851,593"
+        "Region":"Asia",
+        "GDP_USD_billion":20851.59
     },
     {
         "Country":"Germany",
-        "GDP_USD_million":"5,452,858"
+        "Region":"Europe",
+        "GDP_USD_billion":5452.86
     },
     {
         "Country":"Japan",
-        "GDP_USD_million":"4,379,253"
+        "Region":"Asia",
+        "GDP_USD_billion":4379.25
     },
     {
         "Country":"United Kingdom",
-        "GDP_USD_million":"4,264,794"
+        "Region":"Europe",
+        "GDP_USD_billion":4264.79
     },
     {
         "Country":"India",
-        "GDP_USD_million":"4,153,191"
+        "Region":"Asia",
+        "GDP_USD_billion":4153.19
     },
     {
         "Country":"France",
-        "GDP_USD_million":"3,596,094"
+        "Region":"Europe",
+        "GDP_USD_billion":3596.09
     },
     {
         "Country":"Italy",
-        "GDP_USD_million":"2,738,164"
+        "Region":"Europe",
+        "GDP_USD_billion":2738.16
     },
     {
         "Country":"Russia",
-        "GDP_USD_million":"2,656,452"
+        "Region":"Europe",
+        "GDP_USD_billion":2656.45
     },
     {
         "Country":"Brazil",
-        "GDP_USD_million":"2,635,912"
+        "Region":"America",
+        "GDP_USD_billion":2635.91
     },
     {
         "Country":"Canada",
-        "GDP_USD_million":"2,507,340"
+        "Region":"America",
+        "GDP_USD_billion":2507.34
     },
     {
         "Country":"Australia",
-        "GDP_USD_million":"2,123,963"
+        "Region":"Oceania",
+        "GDP_USD_billion":2123.96
     },
     {
         "Country":"Mexico",
-        "GDP_USD_million":"2,120,855"
+        "Region":"America",
+        "GDP_USD_billion":2120.86
     },
     {
         "Country":"Spain",
-        "GDP_USD_million":"2,091,222"
+        "Region":"Europe",
+        "GDP_USD_billion":2091.22
     },
     {
         "Country":"South Korea",
-        "GDP_USD_million":"1,931,008"
+        "Region":"Asia",
+        "GDP_USD_billion":1931.01
     },
     {
         "Country":"Turkey",
-        "GDP_USD_million":"1,640,223"
+        "Region":"Asia",
+        "GDP_USD_billion":1640.22
     },
     {
         "Country":"Indonesia",
-        "GDP_USD_million":"1,539,872"
+        "Region":"Asia",
+        "GDP_USD_billion":1539.87
     },
     {
         "Country":"Netherlands",
-        "GDP_USD_million":"1,449,704"
+        "Region":"Europe",
+        "GDP_USD_billion":1449.7
     },
     {
         "Country":"Saudi Arabia",
-        "GDP_USD_million":"1,388,676"
+        "Region":"Asia",
+        "GDP_USD_billion":1388.68
     },
     {
         "Country":"Switzerland",
-        "GDP_USD_million":"1,146,911"
+        "Region":"Europe",
+        "GDP_USD_billion":1146.91
     },
     {
         "Country":"Poland",
-        "GDP_USD_million":"1,134,248"
+        "Region":"Europe",
+        "GDP_USD_billion":1134.25
     },
     {
         "Country":"Taiwan",
-        "GDP_USD_million":"976,719"
+        "Region":"Asia",
+        "GDP_USD_billion":976.72
     },
     {
         "Country":"Ireland",
-        "GDP_USD_million":"779,381"
+        "Region":"Europe",
+        "GDP_USD_billion":779.38
     },
     {
         "Country":"Belgium",
-        "GDP_USD_million":"776,730"
+        "Region":"Europe",
+        "GDP_USD_billion":776.73
     },
     {
         "Country":"Sweden",
-        "GDP_USD_million":"760,481"
+        "Region":"Europe",
+        "GDP_USD_billion":760.48
     },
     {
         "Country":"Israel",
-        "GDP_USD_million":"719,848"
+        "Region":"Asia",
+        "GDP_USD_billion":719.85
     },
     {
         "Country":"Argentina",
-        "GDP_USD_million":"688,378"
+        "Region":"America",
+        "GDP_USD_billion":688.38
     },
     {
         "Country":"Singapore",
-        "GDP_USD_million":"659,572"
+        "Region":"Asia",
+        "GDP_USD_billion":659.57
     },
     {
         "Country":"Austria",
-        "GDP_USD_million":"623,719"
+        "Region":"Europe",
+        "GDP_USD_billion":623.72
     },
     {
         "Country":"United Arab Emirates",
-        "GDP_USD_million":"621,546"
+        "Region":"Asia",
+        "GDP_USD_billion":621.55
     },
     {
         "Country":"Norway",
-        "GDP_USD_million":"599,406"
+        "Region":"Europe",
+        "GDP_USD_billion":599.41
     },
     {
         "Country":"Thailand",
-        "GDP_USD_million":"579,996"
+        "Region":"Asia",
+        "GDP_USD_billion":580.0
     },
     {
         "Country":"Colombia",
-        "GDP_USD_million":"539,530"
+        "Region":"America",
+        "GDP_USD_billion":539.53
     },
     {
         "Country":"Vietnam",
-        "GDP_USD_million":"527,266"
+        "Region":"Asia",
+        "GDP_USD_billion":527.27
     },
     {
         "Country":"Malaysia",
-        "GDP_USD_million":"516,428"
+        "Region":"Asia",
+        "GDP_USD_billion":516.43
     },
     {
         "Country":"Philippines",
-        "GDP_USD_million":"512,222"
+        "Region":"Asia",
+        "GDP_USD_billion":512.22
     },
     {
         "Country":"Bangladesh",
-        "GDP_USD_million":"510,705"
+        "Region":"Asia",
+        "GDP_USD_billion":510.7
     },
     {
         "Country":"Denmark",
-        "GDP_USD_million":"503,772"
+        "Region":"Europe",
+        "GDP_USD_billion":503.77
     },
     {
         "Country":"Romania",
-        "GDP_USD_million":"480,834"
+        "Region":"Europe",
+        "GDP_USD_billion":480.83
     },
     {
         "Country":"South Africa",
-        "GDP_USD_million":"479,964"
+        "Region":"Africa",
+        "GDP_USD_billion":479.96
     },
     {
         "Country":"Pakistan",
-        "GDP_USD_million":"452,192"
+        "Region":"Asia",
+        "GDP_USD_billion":452.19
     },
     {
         "Country":"Hong Kong",
-        "GDP_USD_million":"450,138"
+        "Region":"Asia",
+        "GDP_USD_billion":450.14
     },
     {
         "Country":"Czech Republic",
-        "GDP_USD_million":"432,597"
+        "Region":"Europe",
+        "GDP_USD_billion":432.6
     },
     {
         "Country":"Egypt",
-        "GDP_USD_million":"429,645"
+        "Region":"Africa",
+        "GDP_USD_billion":429.64
     },
     {
         "Country":"Chile",
-        "GDP_USD_million":"407,850"
+        "Region":"America",
+        "GDP_USD_billion":407.85
     },
     {
         "Country":"Peru",
-        "GDP_USD_million":"380,900"
+        "Region":"America",
+        "GDP_USD_billion":380.9
     },
     {
         "Country":"Portugal",
-        "GDP_USD_million":"380,637"
+        "Region":"Europe",
+        "GDP_USD_billion":380.64
     },
     {
         "Country":"Nigeria",
-        "GDP_USD_million":"377,365"
+        "Region":"Africa",
+        "GDP_USD_billion":377.36
     },
     {
         "Country":"Kazakhstan",
-        "GDP_USD_million":"360,456"
+        "Region":"Asia",
+        "GDP_USD_billion":360.46
     },
     {
         "Country":"Finland",
-        "GDP_USD_million":"337,669"
+        "Region":"Europe",
+        "GDP_USD_billion":337.67
     },
     {
         "Country":"Algeria",
-        "GDP_USD_million":"317,173"
+        "Region":"Africa",
+        "GDP_USD_billion":317.17
     },
     {
         "Country":"Greece",
-        "GDP_USD_million":"307,554"
+        "Region":"Europe",
+        "GDP_USD_billion":307.55
     },
     {
         "Country":"Iran",
-        "GDP_USD_million":"300,293"
+        "Region":"Asia",
+        "GDP_USD_billion":300.29
     },
     {
         "Country":"New Zealand",
-        "GDP_USD_million":"278,636"
+        "Region":"Oceania",
+        "GDP_USD_billion":278.64
     },
     {
         "Country":"Hungary",
-        "GDP_USD_million":"271,122"
+        "Region":"Europe",
+        "GDP_USD_billion":271.12
     },
     {
         "Country":"Iraq",
-        "GDP_USD_million":"264,784"
-    },
-    {
-        "Country":"Cuba",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Asia",
+        "GDP_USD_billion":264.78
     },
     {
         "Country":"Ukraine",
-        "GDP_USD_million":"225,337"
+        "Region":"Europe",
+        "GDP_USD_billion":225.34
     },
     {
         "Country":"Qatar",
-        "GDP_USD_million":"217,416"
+        "Region":"Asia",
+        "GDP_USD_billion":217.42
     },
     {
         "Country":"Morocco",
-        "GDP_USD_million":"194,333"
+        "Region":"Africa",
+        "GDP_USD_billion":194.33
     },
     {
         "Country":"Uzbekistan",
-        "GDP_USD_million":"181,502"
+        "Region":"Asia",
+        "GDP_USD_billion":181.5
     },
     {
         "Country":"Kuwait",
-        "GDP_USD_million":"172,920"
+        "Region":"Asia",
+        "GDP_USD_billion":172.92
     },
     {
         "Country":"Slovakia",
-        "GDP_USD_million":"168,897"
+        "Region":"Europe",
+        "GDP_USD_billion":168.9
     },
     {
         "Country":"Angola",
-        "GDP_USD_million":"152,354"
+        "Region":"Africa",
+        "GDP_USD_billion":152.35
     },
     {
         "Country":"Bulgaria",
-        "GDP_USD_million":"148,121"
+        "Region":"Europe",
+        "GDP_USD_billion":148.12
     },
     {
         "Country":"Kenya",
-        "GDP_USD_million":"147,265"
+        "Region":"Africa",
+        "GDP_USD_billion":147.26
     },
     {
         "Country":"Ecuador",
-        "GDP_USD_million":"138,194"
+        "Region":"America",
+        "GDP_USD_billion":138.19
     },
     {
         "Country":"Dominican Republic",
-        "GDP_USD_million":"136,148"
+        "Region":"America",
+        "GDP_USD_billion":136.15
     },
     {
         "Country":"Puerto Rico",
-        "GDP_USD_million":"129,012"
+        "Region":"America",
+        "GDP_USD_billion":129.01
     },
     {
         "Country":"Guatemala",
-        "GDP_USD_million":"128,886"
+        "Region":"America",
+        "GDP_USD_billion":128.89
     },
     {
         "Country":"DR Congo",
-        "GDP_USD_million":"123,406"
+        "Region":"Africa",
+        "GDP_USD_billion":123.41
     },
     {
         "Country":"Ethiopia",
-        "GDP_USD_million":"121,527"
+        "Region":"Africa",
+        "GDP_USD_billion":121.53
     },
     {
         "Country":"Ghana",
-        "GDP_USD_million":"118,293"
+        "Region":"Africa",
+        "GDP_USD_billion":118.29
     },
     {
         "Country":"Oman",
-        "GDP_USD_million":"117,176"
+        "Region":"Asia",
+        "GDP_USD_billion":117.18
     },
     {
         "Country":"Croatia",
-        "GDP_USD_million":"116,574"
+        "Region":"Europe",
+        "GDP_USD_billion":116.57
     },
     {
         "Country":"Ivory Coast",
-        "GDP_USD_million":"112,115"
+        "Region":"Africa",
+        "GDP_USD_billion":112.12
     },
     {
         "Country":"Serbia",
-        "GDP_USD_million":"112,025"
+        "Region":"Europe",
+        "GDP_USD_billion":112.02
     },
     {
         "Country":"Venezuela",
-        "GDP_USD_million":"111,303"
+        "Region":"America",
+        "GDP_USD_billion":111.3
     },
     {
         "Country":"Luxembourg",
-        "GDP_USD_million":"110,417"
+        "Region":"Europe",
+        "GDP_USD_billion":110.42
     },
     {
         "Country":"Costa Rica",
-        "GDP_USD_million":"109,931"
+        "Region":"America",
+        "GDP_USD_billion":109.93
     },
     {
         "Country":"Lithuania",
-        "GDP_USD_million":"105,907"
+        "Region":"Europe",
+        "GDP_USD_billion":105.91
     },
     {
         "Country":"Belarus",
-        "GDP_USD_million":"102,042"
+        "Region":"Europe",
+        "GDP_USD_billion":102.04
     },
     {
         "Country":"Sri Lanka",
-        "GDP_USD_million":"98,964"
+        "Region":"Asia",
+        "GDP_USD_billion":98.96
     },
     {
         "Country":"Uruguay",
-        "GDP_USD_million":"96,092"
+        "Region":"America",
+        "GDP_USD_billion":96.09
     },
     {
         "Country":"Panama",
-        "GDP_USD_million":"95,024"
+        "Region":"America",
+        "GDP_USD_billion":95.02
     },
     {
         "Country":"Tanzania",
-        "GDP_USD_million":"94,889"
+        "Region":"Africa",
+        "GDP_USD_billion":94.89
     },
     {
         "Country":"Slovenia",
-        "GDP_USD_million":"86,732"
+        "Region":"Europe",
+        "GDP_USD_billion":86.73
     },
     {
         "Country":"Myanmar",
-        "GDP_USD_million":"83,832"
+        "Region":"Asia",
+        "GDP_USD_billion":83.83
     },
     {
         "Country":"Turkmenistan",
-        "GDP_USD_million":"83,065"
+        "Region":"Asia",
+        "GDP_USD_billion":83.06
     },
     {
         "Country":"Bolivia",
-        "GDP_USD_million":"80,743"
+        "Region":"America",
+        "GDP_USD_billion":80.74
     },
     {
         "Country":"Azerbaijan",
-        "GDP_USD_million":"78,372"
+        "Region":"Asia",
+        "GDP_USD_billion":78.37
     },
     {
         "Country":"Uganda",
-        "GDP_USD_million":"73,370"
+        "Region":"Africa",
+        "GDP_USD_billion":73.37
     },
     {
         "Country":"Cameroon",
-        "GDP_USD_million":"65,135"
+        "Region":"Africa",
+        "GDP_USD_billion":65.14
     },
     {
         "Country":"Jordan",
-        "GDP_USD_million":"64,909"
+        "Region":"Asia",
+        "GDP_USD_billion":64.91
     },
     {
         "Country":"Tunisia",
-        "GDP_USD_million":"60,745"
+        "Region":"Africa",
+        "GDP_USD_billion":60.74
     },
     {
         "Country":"Paraguay",
-        "GDP_USD_million":"60,542"
+        "Region":"America",
+        "GDP_USD_billion":60.54
     },
     {
         "Country":"Zimbabwe",
-        "GDP_USD_million":"56,713"
+        "Region":"Africa",
+        "GDP_USD_billion":56.71
     },
     {
         "Country":"Macau",
-        "GDP_USD_million":"54,228"
+        "Region":"Asia",
+        "GDP_USD_billion":54.23
     },
     {
         "Country":"Latvia",
-        "GDP_USD_million":"53,686"
+        "Region":"Europe",
+        "GDP_USD_billion":53.69
     },
     {
         "Country":"Libya",
-        "GDP_USD_million":"52,453"
+        "Region":"Africa",
+        "GDP_USD_billion":52.45
     },
     {
         "Country":"Cambodia",
-        "GDP_USD_million":"52,379"
+        "Region":"Asia",
+        "GDP_USD_billion":52.38
     },
     {
         "Country":"Estonia",
-        "GDP_USD_million":"51,634"
+        "Region":"Europe",
+        "GDP_USD_billion":51.63
     },
     {
         "Country":"Bahrain",
-        "GDP_USD_million":"48,849"
+        "Region":"Asia",
+        "GDP_USD_billion":48.85
     },
     {
         "Country":"Nepal",
-        "GDP_USD_million":"45,844"
+        "Region":"Asia",
+        "GDP_USD_billion":45.84
     },
     {
         "Country":"Cyprus",
-        "GDP_USD_million":"45,171"
+        "Region":"Asia",
+        "GDP_USD_billion":45.17
     },
     {
         "Country":"Sudan",
-        "GDP_USD_million":"44,688"
+        "Region":"Africa",
+        "GDP_USD_billion":44.69
     },
     {
         "Country":"Iceland",
-        "GDP_USD_million":"43,800"
+        "Region":"Europe",
+        "GDP_USD_billion":43.8
     },
     {
         "Country":"Georgia",
-        "GDP_USD_million":"42,716"
+        "Region":"Asia",
+        "GDP_USD_billion":42.72
     },
     {
         "Country":"Honduras",
-        "GDP_USD_million":"41,505"
+        "Region":"America",
+        "GDP_USD_billion":41.5
     },
     {
         "Country":"Zambia",
-        "GDP_USD_million":"41,243"
+        "Region":"Africa",
+        "GDP_USD_billion":41.24
     },
     {
         "Country":"Senegal",
-        "GDP_USD_million":"40,469"
+        "Region":"Africa",
+        "GDP_USD_billion":40.47
     },
     {
         "Country":"El Salvador",
-        "GDP_USD_million":"39,838"
+        "Region":"America",
+        "GDP_USD_billion":39.84
     },
     {
         "Country":"Haiti",
-        "GDP_USD_million":"39,180"
+        "Region":"America",
+        "GDP_USD_billion":39.18
     },
     {
         "Country":"Bosnia and Herzegovina",
-        "GDP_USD_million":"36,771"
+        "Region":"Europe",
+        "GDP_USD_billion":36.77
     },
     {
         "Country":"Lebanon",
-        "GDP_USD_million":"34,497"
+        "Region":"Asia",
+        "GDP_USD_billion":34.5
     },
     {
         "Country":"Papua New Guinea",
-        "GDP_USD_million":"34,403"
+        "Region":"Oceania",
+        "GDP_USD_billion":34.4
     },
     {
         "Country":"Guyana",
-        "GDP_USD_million":"33,961"
+        "Region":"America",
+        "GDP_USD_billion":33.96
     },
     {
         "Country":"Mali",
-        "GDP_USD_million":"33,847"
+        "Region":"Africa",
+        "GDP_USD_billion":33.85
     },
     {
         "Country":"Albania",
-        "GDP_USD_million":"33,333"
+        "Region":"Europe",
+        "GDP_USD_billion":33.33
     },
     {
         "Country":"Burkina Faso",
-        "GDP_USD_million":"32,513"
+        "Region":"Africa",
+        "GDP_USD_billion":32.51
     },
     {
         "Country":"Armenia",
-        "GDP_USD_million":"31,873"
+        "Region":"Asia",
+        "GDP_USD_billion":31.87
     },
     {
         "Country":"Malta",
-        "GDP_USD_million":"30,712"
+        "Region":"Europe",
+        "GDP_USD_billion":30.71
     },
     {
         "Country":"Guinea",
-        "GDP_USD_million":"29,930"
+        "Region":"Africa",
+        "GDP_USD_billion":29.93
     },
     {
         "Country":"Mongolia",
-        "GDP_USD_million":"28,450"
+        "Region":"Asia",
+        "GDP_USD_billion":28.45
     },
     {
         "Country":"Benin",
-        "GDP_USD_million":"27,786"
+        "Region":"Africa",
+        "GDP_USD_billion":27.79
     },
     {
         "Country":"Trinidad and Tobago",
-        "GDP_USD_million":"26,836"
+        "Region":"America",
+        "GDP_USD_billion":26.84
     },
     {
         "Country":"Chad",
-        "GDP_USD_million":"25,628"
+        "Region":"Africa",
+        "GDP_USD_billion":25.63
     },
     {
         "Country":"Niger",
-        "GDP_USD_million":"24,813"
+        "Region":"Africa",
+        "GDP_USD_billion":24.81
     },
     {
         "Country":"Nicaragua",
-        "GDP_USD_million":"24,227"
+        "Region":"America",
+        "GDP_USD_billion":24.23
     },
     {
         "Country":"Kyrgyzstan",
-        "GDP_USD_million":"23,606"
+        "Region":"Asia",
+        "GDP_USD_billion":23.61
     },
     {
         "Country":"Gabon",
-        "GDP_USD_million":"23,363"
+        "Region":"Africa",
+        "GDP_USD_billion":23.36
     },
     {
         "Country":"Mozambique",
-        "GDP_USD_million":"23,275"
+        "Region":"Africa",
+        "GDP_USD_billion":23.28
     },
     {
         "Country":"Jamaica",
-        "GDP_USD_million":"23,028"
+        "Region":"America",
+        "GDP_USD_billion":23.03
     },
     {
         "Country":"Botswana",
-        "GDP_USD_million":"21,937"
+        "Region":"Africa",
+        "GDP_USD_billion":21.94
     },
     {
         "Country":"Moldova",
-        "GDP_USD_million":"21,889"
+        "Region":"Europe",
+        "GDP_USD_billion":21.89
     },
     {
         "Country":"North Macedonia",
-        "GDP_USD_million":"21,605"
+        "Region":"Europe",
+        "GDP_USD_billion":21.6
     },
     {
         "Country":"Madagascar",
-        "GDP_USD_million":"21,185"
+        "Region":"Africa",
+        "GDP_USD_billion":21.18
     },
     {
         "Country":"Tajikistan",
-        "GDP_USD_million":"20,418"
+        "Region":"Asia",
+        "GDP_USD_billion":20.42
     },
     {
         "Country":"Afghanistan",
-        "GDP_USD_million":"19,662"
+        "Region":"Asia",
+        "GDP_USD_billion":19.66
     },
     {
         "Country":"Laos",
-        "GDP_USD_million":"18,959"
+        "Region":"Asia",
+        "GDP_USD_billion":18.96
     },
     {
         "Country":"Malawi",
-        "GDP_USD_million":"18,152"
+        "Region":"Africa",
+        "GDP_USD_billion":18.15
     },
     {
         "Country":"Rwanda",
-        "GDP_USD_million":"17,336"
+        "Region":"Africa",
+        "GDP_USD_billion":17.34
     },
     {
         "Country":"Namibia",
-        "GDP_USD_million":"17,314"
-    },
-    {
-        "Country":"Syria",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"North Korea",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Africa",
+        "GDP_USD_billion":17.31
     },
     {
         "Country":"Mauritius",
-        "GDP_USD_million":"17,119"
+        "Region":"Africa",
+        "GDP_USD_billion":17.12
     },
     {
         "Country":"Bahamas",
-        "GDP_USD_million":"17,042"
+        "Region":"America",
+        "GDP_USD_billion":17.04
     },
     {
         "Country":"Congo",
-        "GDP_USD_million":"17,028"
+        "Region":"Africa",
+        "GDP_USD_billion":17.03
     },
     {
         "Country":"Brunei",
-        "GDP_USD_million":"16,863"
+        "Region":"Asia",
+        "GDP_USD_billion":16.86
     },
     {
         "Country":"Palestine",
-        "GDP_USD_million":"16,017"
+        "Region":"Asia",
+        "GDP_USD_billion":16.02
     },
     {
         "Country":"Mauritania",
-        "GDP_USD_million":"14,352"
+        "Region":"Africa",
+        "GDP_USD_billion":14.35
     },
     {
         "Country":"Somalia",
-        "GDP_USD_million":"14,174"
+        "Region":"Africa",
+        "GDP_USD_billion":14.17
     },
     {
         "Country":"Kosovo",
-        "GDP_USD_million":"14,053"
+        "Region":"Europe",
+        "GDP_USD_billion":14.05
     },
     {
         "Country":"Equatorial Guinea",
-        "GDP_USD_million":"13,722"
+        "Region":"Africa",
+        "GDP_USD_billion":13.72
     },
     {
         "Country":"Togo",
-        "GDP_USD_million":"13,437"
-    },
-    {
-        "Country":"Channel Islands",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"Monaco",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Africa",
+        "GDP_USD_billion":13.44
     },
     {
         "Country":"Montenegro",
-        "GDP_USD_million":"10,227"
+        "Region":"Europe",
+        "GDP_USD_billion":10.23
     },
     {
         "Country":"Liechtenstein",
-        "GDP_USD_million":"9,442"
-    },
-    {
-        "Country":"Bermuda",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"New Caledonia",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Europe",
+        "GDP_USD_billion":9.44
     },
     {
         "Country":"Barbados",
-        "GDP_USD_million":"8,483"
+        "Region":"America",
+        "GDP_USD_billion":8.48
     },
     {
         "Country":"Sierra Leone",
-        "GDP_USD_million":"8,270"
+        "Region":"Africa",
+        "GDP_USD_billion":8.27
     },
     {
         "Country":"Burundi",
-        "GDP_USD_million":"8,137"
+        "Region":"Africa",
+        "GDP_USD_billion":8.14
     },
     {
         "Country":"Maldives",
-        "GDP_USD_million":"8,130"
-    },
-    {
-        "Country":"Cayman Islands",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Asia",
+        "GDP_USD_billion":8.13
     },
     {
         "Country":"Yemen",
-        "GDP_USD_million":"7,435"
-    },
-    {
-        "Country":"Isle of Man",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"Guam",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Asia",
+        "GDP_USD_billion":7.44
     },
     {
         "Country":"Fiji",
-        "GDP_USD_million":"6,352"
-    },
-    {
-        "Country":"French Polynesia",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Oceania",
+        "GDP_USD_billion":6.35
     },
     {
         "Country":"South Sudan",
-        "GDP_USD_million":"6,069"
+        "Region":"Africa",
+        "GDP_USD_billion":6.07
     },
     {
         "Country":"Suriname",
-        "GDP_USD_million":"5,908"
+        "Region":"America",
+        "GDP_USD_billion":5.91
     },
     {
         "Country":"Eswatini",
-        "GDP_USD_million":"5,792"
+        "Region":"Africa",
+        "GDP_USD_billion":5.79
     },
     {
         "Country":"Liberia",
-        "GDP_USD_million":"5,642"
+        "Region":"Africa",
+        "GDP_USD_billion":5.64
     },
     {
         "Country":"Andorra",
-        "GDP_USD_million":"4,879"
+        "Region":"Europe",
+        "GDP_USD_billion":4.88
     },
     {
         "Country":"Djibouti",
-        "GDP_USD_million":"4,725"
-    },
-    {
-        "Country":"U.S. Virgin Islands",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Africa",
+        "GDP_USD_billion":4.72
     },
     {
         "Country":"Aruba",
-        "GDP_USD_million":"4,671"
-    },
-    {
-        "Country":"Faroe Islands",
-        "GDP_USD_million":"— N\/a"
+        "Region":"America",
+        "GDP_USD_billion":4.67
     },
     {
         "Country":"Bhutan",
-        "GDP_USD_million":"3,856"
-    },
-    {
-        "Country":"Curaçao",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Asia",
+        "GDP_USD_billion":3.86
     },
     {
         "Country":"Central African Republic",
-        "GDP_USD_million":"3,492"
-    },
-    {
-        "Country":"Greenland",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Africa",
+        "GDP_USD_billion":3.49
     },
     {
         "Country":"Belize",
-        "GDP_USD_million":"3,450"
+        "Region":"America",
+        "GDP_USD_billion":3.45
     },
     {
         "Country":"Cape Verde",
-        "GDP_USD_million":"3,448"
+        "Region":"Africa",
+        "GDP_USD_billion":3.45
     },
     {
         "Country":"Guinea-Bissau",
-        "GDP_USD_million":"2,985"
+        "Region":"Africa",
+        "GDP_USD_billion":2.98
     },
     {
         "Country":"Lesotho",
-        "GDP_USD_million":"2,972"
+        "Region":"Africa",
+        "GDP_USD_billion":2.97
     },
     {
         "Country":"Gambia",
-        "GDP_USD_million":"2,792"
+        "Region":"Africa",
+        "GDP_USD_billion":2.79
     },
     {
         "Country":"Saint Lucia",
-        "GDP_USD_million":"2,765"
-    },
-    {
-        "Country":"Zanzibar",
-        "GDP_USD_million":"— N\/a"
+        "Region":"America",
+        "GDP_USD_billion":2.76
     },
     {
         "Country":"San Marino",
-        "GDP_USD_million":"2,417"
+        "Region":"Europe",
+        "GDP_USD_billion":2.42
     },
     {
         "Country":"Antigua and Barbuda",
-        "GDP_USD_million":"2,385"
+        "Region":"America",
+        "GDP_USD_billion":2.38
     },
     {
         "Country":"Seychelles",
-        "GDP_USD_million":"2,251"
+        "Region":"Africa",
+        "GDP_USD_billion":2.25
     },
     {
         "Country":"Timor-Leste",
-        "GDP_USD_million":"2,170"
-    },
-    {
-        "Country":"Eritrea",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Asia",
+        "GDP_USD_billion":2.17
     },
     {
         "Country":"Solomon Islands",
-        "GDP_USD_million":"1,836"
-    },
-    {
-        "Country":"British Virgin Islands",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Oceania",
+        "GDP_USD_billion":1.84
     },
     {
         "Country":"Comoros",
-        "GDP_USD_million":"1,814"
-    },
-    {
-        "Country":"Sint Maarten",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"Turks and Caicos Islands",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Africa",
+        "GDP_USD_billion":1.81
     },
     {
         "Country":"Grenada",
-        "GDP_USD_million":"1,483"
+        "Region":"America",
+        "GDP_USD_billion":1.48
     },
     {
         "Country":"Vanuatu",
-        "GDP_USD_million":"1,396"
+        "Region":"Oceania",
+        "GDP_USD_billion":1.4
     },
     {
         "Country":"Samoa",
-        "GDP_USD_million":"1,376"
+        "Region":"Oceania",
+        "GDP_USD_billion":1.38
     },
     {
         "Country":"Saint Vincent and the Grenadines",
-        "GDP_USD_million":"1,236"
+        "Region":"America",
+        "GDP_USD_billion":1.24
     },
     {
         "Country":"São Tomé and Príncipe",
-        "GDP_USD_million":"1,161"
+        "Region":"Africa",
+        "GDP_USD_billion":1.16
     },
     {
         "Country":"Saint Kitts and Nevis",
-        "GDP_USD_million":"1,143"
-    },
-    {
-        "Country":"Northern Mariana Islands",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"American Samoa",
-        "GDP_USD_million":"— N\/a"
+        "Region":"America",
+        "GDP_USD_billion":1.14
     },
     {
         "Country":"Dominica",
-        "GDP_USD_million":"791"
+        "Region":"America",
+        "GDP_USD_billion":0.79
     },
     {
         "Country":"Tonga",
-        "GDP_USD_million":"716"
-    },
-    {
-        "Country":"Saint Martin",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.72
     },
     {
         "Country":"Federated States of Micronesia",
-        "GDP_USD_million":"521"
-    },
-    {
-        "Country":"Anguilla",
-        "GDP_USD_million":"— N\/a"
-    },
-    {
-        "Country":"Cook Islands",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.52
     },
     {
         "Country":"Kiribati",
-        "GDP_USD_million":"401"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.4
     },
     {
         "Country":"Palau",
-        "GDP_USD_million":"377"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.38
     },
     {
         "Country":"Marshall Islands",
-        "GDP_USD_million":"342"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.34
     },
     {
         "Country":"Nauru",
-        "GDP_USD_million":"196"
-    },
-    {
-        "Country":"Montserrat",
-        "GDP_USD_million":"— N\/a"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.2
     },
     {
         "Country":"Tuvalu",
-        "GDP_USD_million":"65"
+        "Region":"Oceania",
+        "GDP_USD_billion":0.06
     }
 ]
