@@ -122,3 +122,16 @@ WORDCLOUD_NEGATIVE_PATH = "output/wordcloud_negative.png"
 
 TRAINING_LOG_PATH = "logs/training_log.txt"
 PREDICTION_ERROR_LOG_PATH = "logs/prediction_errors.csv"
+
+# =========================
+# Comparison CSV files
+# =========================
+
+LABELED_CSV_FILES = {
+    "jione": "data/output/result_Jione.csv",
+    "yongsun": "data/output/test_predictions_Yongsun.csv",
+    "albert": "data/output/youtube_comments_labeled_Albert.csv",
+}
+
+COMPARISON_OUTPUT_DIR = "output/comparison_wordclouds"
+SENTIMENT_COMPARISON_PATH = "output/sentiment_comparison.png"
