@@ -1,0 +1,8 @@
+time,Worker-1,Worker-2,started_tasks,finished_tasks
+0.053,running A,running B,"A,B",
+2.058,running A,idle,,B
+2.059,running A,running C,C,
+3.064,running A,idle,,C
+3.065,running A,running D,D,
+5.054,idle,running D,,A
+6.07,idle,idle,,D
