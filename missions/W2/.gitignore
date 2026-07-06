@@ -28,6 +28,9 @@ data/
 *.xls
 *.json
 
+# Raw datasets
+missions/W2/W2M5/data/
+
 # Output / result files
 output/
 outputs/

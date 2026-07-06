@@ -15,6 +15,17 @@ This file stores constants used for sentiment word cloud visualization.
 # -----------------------------
 # Dataset settings
 # -----------------------------
+DATA_PATH = "data/raw/training.1600000.processed.noemoticon.csv"
+
+DATA_COLUMNS = [
+    "target",
+    "id",
+    "date",
+    "flag",
+    "user",
+    "text",
+]
+
 
 TARGET_COLUMN = "target"
 TEXT_COLUMN = "text"
@@ -33,7 +44,7 @@ NEGATIVE_LABEL = "negative"
 # Sampling settings
 # -----------------------------
 
-SAMPLE_SIZE = 10
+SAMPLE_SIZE = 1000
 RANDOM_STATE = 42
 
 
