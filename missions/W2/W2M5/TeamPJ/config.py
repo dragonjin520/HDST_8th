@@ -1,5 +1,38 @@
 # config.py
 
+SCRAPED_COMMENTS_PATH = "data/input/hyundai_youtube_comments_scraped.csv"
+
+MAX_COMMENTS_PER_VIDEO = 500
+
+MAX_SCROLL_COUNT = 30
+
+SCROLL_PAUSE_SECONDS = 1.5
+
+YOUTUBE_VIDEO_TARGETS = [
+    {
+        "car_name": "IONIQ 9",
+        "car_type": "SUV",
+        "url": "https://www.youtube.com/watch?v=5CIJ_zk7DR4",
+    },
+    {
+        "car_name": "IONIQ 9",
+        "car_type": "SUV",
+        "url": "https://www.youtube.com/watch?v=3TNjG-mrNmk",
+    },
+    {
+        "car_name": "IONIQ 6",
+        "car_type": "Sedan",
+        "url": "https://www.youtube.com/watch?v=35luW5GG0Z8&t=2s",
+    },
+    {
+        "car_name": "IONIQ 6",
+        "car_type": "Sedan",
+        "url": "https://www.youtube.com/watch?v=_ol0jxwfqmw",
+    },
+]
+
+
+
 # =========================
 # Data paths
 # =========================
