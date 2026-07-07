@@ -47,17 +47,17 @@ def main():
     if "car_type" not in df.columns:
         raise ValueError("car_type column does not exist.")
 
-    if "sentiment_name" not in df.columns:
+    if "sentiment" not in df.columns:
         if "sentiment" not in df.columns:
             raise ValueError("sentiment or sentiment_name column is required.")
-        df["sentiment_name"] = df["sentiment"].apply(normalize_sentiment_label)
+        df["sentiment"] = df["sentiment"].apply(normalize_sentiment_label)
 
     print("\nCar type counts:")
     print(df["car_type"].value_counts())
 
     print("\nSentiment counts by car_type:")
     count_df = (
-        df.groupby(["car_type", "sentiment_name"])
+        df.groupby(["car_name","car_type", "sentiment"])
         .size()
         .reset_index(name="count")
     )
@@ -65,7 +65,7 @@ def main():
 
     pivot_df = count_df.pivot(
         index="car_type",
-        columns="sentiment_name",
+        columns="sentiment",
         values="count",
     ).fillna(0)
 

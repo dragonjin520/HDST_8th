@@ -14,7 +14,7 @@ YOUTUBE_INPUT_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/dat
 
 # Prediction result
 # 모델이 감정 라벨을 붙인 결과 CSV
-LABELED_CSV_PATH = "data/output/youtube_comments_labeled_Final.csv"
+LABELED_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/W2M5/TeamPJ/data/output/youtube_comments_labeled_Final_0.4_0.6.csv"
 
 
 TRAINING_HISTORY_PATH = "logs/training_history_albert.csv"
@@ -135,7 +135,7 @@ PREDICTION_ERROR_LOG_PATH = "logs/prediction_errors.csv"
 # =========================
 
 LABELED_CSV_FILES = {
-    "albert": "data/output/youtube_comments_labeled_Final.csv",
+    "Team": "data/output/youtube_comments_labeled_Final_0.4_0.6.csv",
 }
 
 COMPARISON_OUTPUT_DIR = "output/comparison_wordclouds"
