@@ -29,3 +29,13 @@ logs/
 
 # Temporary files
 *.tmp
+
+# Raw datasets
+missions/W2/data/raw/
+
+# Python virtual environments
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
