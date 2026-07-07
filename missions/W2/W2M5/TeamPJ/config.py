@@ -1,53 +1,25 @@
 # config.py
 
-SCRAPED_COMMENTS_PATH = "data/input/hyundai_youtube_comments_scraped.csv"
-
-MAX_COMMENTS_PER_VIDEO = 500
-
-MAX_SCROLL_COUNT = 30
-
-SCROLL_PAUSE_SECONDS = 1.5
-
-YOUTUBE_VIDEO_TARGETS = [
-    {
-        "car_name": "IONIQ 9",
-        "car_type": "SUV",
-        "url": "https://www.youtube.com/watch?v=5CIJ_zk7DR4",
-    },
-    {
-        "car_name": "IONIQ 9",
-        "car_type": "SUV",
-        "url": "https://www.youtube.com/watch?v=3TNjG-mrNmk",
-    },
-    {
-        "car_name": "IONIQ 6",
-        "car_type": "Sedan",
-        "url": "https://www.youtube.com/watch?v=35luW5GG0Z8&t=2s",
-    },
-    {
-        "car_name": "IONIQ 6",
-        "car_type": "Sedan",
-        "url": "https://www.youtube.com/watch?v=_ol0jxwfqmw",
-    },
-]
-
-
-
 # =========================
 # Data paths
 # =========================
 
 # Sentiment140 training data
 # TeamPJ 기준으로 한 단계 위 W2M5/data/raw/에 있는 개인과제 CSV
-TRAINING_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/W2M5/TeamPJ/data/raw/training.1600000.processed.noemoticon.csv"
+TRAINING_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/data/raw/training.1600000.processed.noemoticon.csv"
 
 # Hyundai YouTube comments input data
 # 모델이 예측할 유튜브 댓글 CSV
-YOUTUBE_INPUT_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/W2M5/TeamPJ/data/input/hyundai_youtube_comments_SUV_Sedan2.csv"
+YOUTUBE_INPUT_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/data/input/hyundai_youtube_comments_Final.csv"
 
 # Prediction result
 # 모델이 감정 라벨을 붙인 결과 CSV
-LABELED_CSV_PATH = "data/output/youtube_comments_labeled_SUV_sedan2.csv"
+LABELED_CSV_PATH = "data/output/youtube_comments_labeled_Final.csv"
+
+
+TRAINING_HISTORY_PATH = "logs/training_history_albert.csv"
+MODEL_NAME = "albert_lstm"
+
 
 
 # =========================
@@ -112,14 +84,14 @@ TOKENIZER_PATH = "models/tokenizer.pkl"
 # =========================
 
 # Sentiment140에서 클래스별로 몇 개씩 샘플링할지
-# 20000이면 negative 20000 + positive 20000 = 총 40000개
-SAMPLE_SIZE_PER_CLASS = 20000
+# 25000이면 negative 25000 + positive 25000 = 총 50000개
+SAMPLE_SIZE_PER_CLASS = 25000
 
 # 단어 사전 크기
 MAX_VOCAB_SIZE = 30000
 
 # 한 댓글/트윗당 최대 단어 수
-MAX_SEQUENCE_LENGTH = 50
+MAX_SEQUENCE_LENGTH = 100
 
 # LSTM model settings
 EMBEDDING_DIM = 100
@@ -163,9 +135,7 @@ PREDICTION_ERROR_LOG_PATH = "logs/prediction_errors.csv"
 # =========================
 
 LABELED_CSV_FILES = {
-    "jione": "data/output/result_Jione.csv",
-    "yongsun": "data/output/test_result_50.csv",
-    "albert": "data/output/youtube_comments_labeled_Albert.csv",
+    "albert": "data/output/youtube_comments_labeled_Final.csv",
 }
 
 COMPARISON_OUTPUT_DIR = "output/comparison_wordclouds"
@@ -177,9 +147,9 @@ SENTIMENT_COMPARISON_PATH = "output/sentiment_comparison.png"
 
 # =========================
 
-NEGATIVE_THRESHOLD = 0.4
+NEGATIVE_THRESHOLD = 0.45
 
-POSITIVE_THRESHOLD = 0.6
+POSITIVE_THRESHOLD = 0.55
 
 LABEL_NAME_MAP = {
 

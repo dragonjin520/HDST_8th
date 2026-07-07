@@ -3,6 +3,7 @@
 import os
 import sys
 import pickle
+import pandas as pd
 from collections import Counter
 
 import pandas as pd
@@ -36,7 +37,9 @@ from config import (
     EPOCHS,
     LEARNING_RATE,
     MODEL_PATH,
-    EARLY_STOPPING_PATIENCE
+    EARLY_STOPPING_PATIENCE,
+    TRAINING_HISTORY_PATH,
+    MODEL_NAME,
 )
 
 from src.preprocess import clean_text, is_valid_text
@@ -578,9 +581,12 @@ def main():
         lr=LEARNING_RATE,
     )
 
+    history = []
     early_stopping = EarlyStopping(patience=EARLY_STOPPING_PATIENCE)
 
     for epoch in range(EPOCHS):
+        print(f"\nEpoch {epoch + 1}/{EPOCHS}")
+
         train_loss, train_accuracy = train_one_epoch(
             model=model,
             data_loader=train_loader,
@@ -589,42 +595,45 @@ def main():
             device=device,
         )
 
-        val_loss, val_accuracy = evaluate(
+        validation_loss, validation_accuracy = evaluate(
             model=model,
             data_loader=val_loader,
             criterion=criterion,
             device=device,
         )
-        is_best_model = early_stopping.step(val_loss)
+
+        print(f"Train Loss: {train_loss:.4f}")
+        print(f"Train Accuracy: {train_accuracy:.4f}")
+        print(f"Validation Loss: {validation_loss:.4f}")
+        print(f"Validation Accuracy: {validation_accuracy:.4f}")
+
+        history.append(
+            {
+                "model_name": MODEL_NAME,
+                "epoch": epoch + 1,
+                "train_loss": train_loss,
+                "val_loss": validation_loss,
+                "train_acc": train_accuracy,
+                "val_acc": validation_accuracy,
+            }
+        )
+
+        is_best_model = early_stopping.step(validation_loss)
 
         if is_best_model:
             torch.save(model.state_dict(), MODEL_PATH)
-            print(f"Best model saved. Validation loss: {val_loss:.4f}")
+            print(f"Best model saved to: {MODEL_PATH}")
 
         if early_stopping.should_stop:
             print("Early stopping triggered.")
             break
 
-        print(f"\nEpoch {epoch + 1}/{EPOCHS}")
-        print(f"Train Loss: {train_loss:.4f}")
-        print(f"Train Accuracy: {train_accuracy:.4f}")
-        print(f"Validation Loss: {val_loss:.4f}")
-        print(f"Validation Accuracy: {val_accuracy:.4f}")
+    os.makedirs(os.path.dirname(TRAINING_HISTORY_PATH), exist_ok=True)
 
-    print("\nEvaluating on test set...")
-    test_loss, test_accuracy = evaluate(
-        model=model,
-        data_loader=test_loader,
-        criterion=criterion,
-        device=device,
-    )
+    history_df = pd.DataFrame(history)
+    history_df.to_csv(TRAINING_HISTORY_PATH, index=False, encoding="utf-8-sig")
 
-    print(f"Test Loss: {test_loss:.4f}")
-    print(f"Test Accuracy: {test_accuracy:.4f}")
-
-    print("\nSaving model...")
-    save_model(model, MODEL_PATH)
-    print(f"Model saved to: {MODEL_PATH}")
+    print(f"Training history saved to: {TRAINING_HISTORY_PATH}")
 
     print("\nStep 7 complete.")
 
