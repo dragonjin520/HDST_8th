@@ -1,4 +1,4 @@
-from multiprocessing import Queue
+from multiprocessing import Process, Queue
 
 
 def push_items(queue, items):
@@ -23,8 +23,14 @@ def main():
 
     queue = Queue()
 
-    push_items(queue, colors)
-    pop_items(queue, len(colors))
+    push_process = Process(target=push_items, args=(queue, colors))
+    pop_process = Process(target=pop_items, args=(queue, len(colors)))
+
+    push_process.start()
+    push_process.join()
+
+    pop_process.start()
+    pop_process.join()
 
 
 if __name__ == "__main__":
