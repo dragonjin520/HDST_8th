@@ -36,6 +36,7 @@ from config import (
     EPOCHS,
     LEARNING_RATE,
     MODEL_PATH,
+    EARLY_STOPPING_PATIENCE
 )
 
 from src.preprocess import clean_text, is_valid_text
@@ -288,6 +289,30 @@ class SentimentLSTM(torch.nn.Module):
 
         return logits.squeeze(1)
 
+class EarlyStopping:
+    """
+    Stop training when validation loss does not improve.
+    """
+
+    def __init__(self, patience=2):
+        self.patience = patience
+        self.best_loss = float("inf")
+        self.counter = 0
+        self.should_stop = False
+
+    def step(self, validation_loss):
+        if validation_loss < self.best_loss:
+            self.best_loss = validation_loss
+            self.counter = 0
+            return True
+
+        self.counter += 1
+
+        if self.counter >= self.patience:
+            self.should_stop = True
+
+        return False
+
 
 def get_device():
     """
@@ -387,7 +412,7 @@ def save_model(model, path):
     Save trained PyTorch model state_dict.
     """
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    torch.save(model.state_dict(), path)
+    # torch.save(model.state_dict(), path)
 
 
 def create_data_loaders(
@@ -553,6 +578,8 @@ def main():
         lr=LEARNING_RATE,
     )
 
+    early_stopping = EarlyStopping(patience=EARLY_STOPPING_PATIENCE)
+
     for epoch in range(EPOCHS):
         train_loss, train_accuracy = train_one_epoch(
             model=model,
@@ -568,6 +595,15 @@ def main():
             criterion=criterion,
             device=device,
         )
+        is_best_model = early_stopping.step(val_loss)
+
+        if is_best_model:
+            torch.save(model.state_dict(), MODEL_PATH)
+            print(f"Best model saved. Validation loss: {val_loss:.4f}")
+
+        if early_stopping.should_stop:
+            print("Early stopping triggered.")
+            break
 
         print(f"\nEpoch {epoch + 1}/{EPOCHS}")
         print(f"Train Loss: {train_loss:.4f}")
