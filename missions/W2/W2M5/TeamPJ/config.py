@@ -10,11 +10,11 @@ TRAINING_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/W2M5/Tea
 
 # Hyundai YouTube comments input data
 # 모델이 예측할 유튜브 댓글 CSV
-YOUTUBE_INPUT_CSV_PATH = "data/input/hyundai_youtube_comments.csv"
+YOUTUBE_INPUT_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/W2M5/TeamPJ/data/input/hyundai_youtube_comments_SUV_Sedan.csv"
 
 # Prediction result
 # 모델이 감정 라벨을 붙인 결과 CSV
-LABELED_CSV_PATH = "data/output/youtube_comments_labeled.csv"
+LABELED_CSV_PATH = "data/output/youtube_comments_labeled_SUV_sedan.csv"
 
 
 # =========================
