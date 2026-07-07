@@ -22,6 +22,8 @@ from config import (
     NUM_LAYERS,
     DROPOUT,
     LABEL_NAME_MAP,
+    NEGATIVE_THRESHOLD,
+    POSITIVE_THRESHOLD,
 )
 
 from src.preprocess import clean_text, is_valid_text
@@ -79,14 +81,12 @@ def load_trained_model(model_path, tokenizer, device):
 
 def predict_sentiments(model, sequences, device, batch_size=64):
     """
-    Predict sentiment probabilities and labels.
+    Predict positive probabilities.
 
     Returns:
         positive_probabilities: list of positive probabilities
-        predicted_labels: list of 0/1 labels
     """
     all_probabilities = []
-    all_labels = []
 
     tensor_sequences = torch.tensor(sequences, dtype=torch.long)
 
@@ -98,12 +98,27 @@ def predict_sentiments(model, sequences, device, batch_size=64):
             logits = model(batch_x)
             probabilities = torch.sigmoid(logits)
 
-            labels = (probabilities >= 0.5).long()
-
             all_probabilities.extend(probabilities.cpu().numpy().tolist())
-            all_labels.extend(labels.cpu().numpy().tolist())
 
-    return all_probabilities, all_labels
+    return all_probabilities
+
+def assign_sentiment_label(positive_probability):
+    """
+    Assign sentiment label using probability thresholds.
+
+    0 = negative
+    2 = neutral
+    4 = positive
+    """
+    if positive_probability >= POSITIVE_THRESHOLD:
+        return 4
+
+    if positive_probability <= NEGATIVE_THRESHOLD:
+        return 0
+
+    return 2
+
+
 
 
 def main():
@@ -153,7 +168,7 @@ def main():
     )
 
     print("\nPredicting sentiments...")
-    positive_probabilities, predicted_labels = predict_sentiments(
+    positive_probabilities = predict_sentiments(
         model=model,
         sequences=sequences,
         device=device,
@@ -161,12 +176,13 @@ def main():
     )
 
     valid_df["positive_probability"] = positive_probabilities
-    valid_df["predicted_label"] = predicted_labels
-    valid_df["sentiment"] = valid_df["predicted_label"].map(LABEL_NAME_MAP)
-
-    # Optional: negative probability
     valid_df["negative_probability"] = 1 - valid_df["positive_probability"]
 
+    valid_df["sentiment"] = valid_df["positive_probability"].apply(
+        assign_sentiment_label
+    )
+
+    valid_df["sentiment_name"] = valid_df["sentiment"].map(LABEL_NAME_MAP)
     print("\nPrediction result counts:")
     print(valid_df["sentiment"].value_counts())
 

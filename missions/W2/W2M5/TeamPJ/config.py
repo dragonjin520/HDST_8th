@@ -135,3 +135,23 @@ LABELED_CSV_FILES = {
 
 COMPARISON_OUTPUT_DIR = "output/comparison_wordclouds"
 SENTIMENT_COMPARISON_PATH = "output/sentiment_comparison.png"
+
+# =========================
+
+# Prediction thresholds
+
+# =========================
+
+NEGATIVE_THRESHOLD = 0.4
+
+POSITIVE_THRESHOLD = 0.6
+
+LABEL_NAME_MAP = {
+
+    0: "negative",
+
+    2: "neutral",
+
+    4: "positive",
+
+}
