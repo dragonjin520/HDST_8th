@@ -1,36 +1,25 @@
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 
 
-def push_items(queue, items):
-    print("pushing items to queue:")
-
-    for index, item in enumerate(items, start=1):
-        queue.put(item)
-        print(f"item no: {index} {item}")
+def print_continent(continent: str = "Asia") -> None:
+    """Print a sentence including the name of a continent."""
+    print(f"The name of continent is : {continent}")
 
 
-def pop_items(queue, item_count):
-    print()
-    print("popping items from queue:")
+def main() -> None:
+    """Create and run multiple processes for printing continent names."""
+    processes = [
+        Process(target=print_continent, args=("America",)),
+        Process(target=print_continent, args=("Europe",)),
+        Process(target=print_continent),
+        Process(target=print_continent, args=("Africa",)),
+    ]
 
-    for index in range(item_count):
-        item = queue.get()
-        print(f"item no: {index} {item}")
+    for process in processes:
+        process.start()
 
-
-def main():
-    colors = ["red", "green", "blue", "black"]
-
-    queue = Queue()
-
-    push_process = Process(target=push_items, args=(queue, colors))
-    pop_process = Process(target=pop_items, args=(queue, len(colors)))
-
-    push_process.start()
-    push_process.join()
-
-    pop_process.start()
-    pop_process.join()
+    for process in processes:
+        process.join()
 
 
 if __name__ == "__main__":
