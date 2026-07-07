@@ -6,7 +6,7 @@
 
 # Sentiment140 training data
 # TeamPJ 기준으로 한 단계 위 W2M5/data/raw/에 있는 개인과제 CSV
-TRAINING_CSV_PATH = "../data/raw/training.1600000.processed.noemoticon.csv"
+TRAINING_CSV_PATH = "/Users/admin/Documents/GitHub/HDST_8th/missions/W2/W2M5/TeamPJ/data/raw/training.1600000.processed.noemoticon.csv"
 
 # Hyundai YouTube comments input data
 # 모델이 예측할 유튜브 댓글 CSV
@@ -129,7 +129,7 @@ PREDICTION_ERROR_LOG_PATH = "logs/prediction_errors.csv"
 
 LABELED_CSV_FILES = {
     "jione": "data/output/result_Jione.csv",
-    "yongsun": "data/output/test_predictions_Yongsun.csv",
+    "yongsun": "data/output/test_result_50.csv",
     "albert": "data/output/youtube_comments_labeled_Albert.csv",
 }
 
