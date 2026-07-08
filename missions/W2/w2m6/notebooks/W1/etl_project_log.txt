@@ -1,0 +1,4 @@
+2026-July-08-17-49-04, ETL Job Started
+2026-July-08-17-49-04, Extract phase Started
+2026-July-08-17-49-06, Load phase Started
+2026-July-08-17-49-06, Load phase Ended
