@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Input / raw data
+missions/W2/data/input/
+missions/W2/data/raw/
+*/data/input/
+*/data/raw/
+
+# Virtual environments
+venv/
+.venv/
+*/venv/
+*/.venv/
+missions/W2/venv/
+
+# Large/raw data
+*.zip
