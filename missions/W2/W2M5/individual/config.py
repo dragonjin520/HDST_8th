@@ -16,6 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 OUTPUT_DIR = BASE_DIR / "output"
 
+DATA_PATH = BASE_DIR.parent.parent / "data" / "raw" / "training.1600000.processed.noemoticon.csv"
 WORDCLOUD_OUTPUT_PATH = OUTPUT_DIR / "sentiment_wordcloud.png"
 
 # -----------------------------
