@@ -1,6 +1,6 @@
-# HDFS 저장 경로와 복제 설정
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- HDFS 저장 경로와 복제 설정 -->
 
 <configuration>
     <!-- 단일 노드 환경이므로 HDFS 블록 복제 개수를 1로 설정 -->
