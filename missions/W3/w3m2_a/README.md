@@ -1,99 +1,98 @@
-# 학습 목표
-*** This is 1st part of W3M2.
-Demonstrate your understanding of Apache Hadoop by setting up a multi-node Hadoop cluster using Docker. This project will help you gain hands-on experience with Hadoop cluster configuration and Docker containerization.
+# W3M1과 W3M2의 차이점
 
-## 기능요구사항
-### Docker Images:
-The Docker images should encapsulate fully functional Hadoop master and worker nodes.
+W3M1과 W3M2는 모두 Docker 환경에서 Hadoop을 실행하지만, 확인하려는 범위가 다르다.
 
-When the Docker containers run, they should automatically start all necessary Hadoop services.
+## W3M1
 
-The containers should be able to connect to the same Docker network to facilitate communication between master and worker nodes.
+W3M1의 중심은 **HDFS의 저장 구조와 데이터 영속성 확인**이다.
 
-### HDFS Operations:
-Users should be able to interact with HDFS from the master node.
+## W3M2
 
-Users should be able to create directories, upload files, and retrieve files from HDFS.
+W3M2의 중심은 **여러 Hadoop 노드로 클러스터를 구성하고 분산 저장과 분산 처리를 검증하는 것**이다.
 
-The HDFS web interface should be accessible from the host machine to monitor the file system.
+- Master 노드에서 NameNode와 ResourceManager를 실행한다.
+- Worker 노드에서 DataNode와 NodeManager를 실행한다.
+- HDFS를 이용해 데이터를 분산 저장한다.
+- YARN이 Worker 노드에 작업을 배정한다.
+- MapReduce 작업을 실행해 실제 분산 처리가 가능한지 확인한다.
 
-### Cluster Operations:
-The Hadoop cluster should recognize and utilize the worker nodes for distributed storage and processing.
+```text
+Master Node
+├── NameNode
+└── ResourceManager
 
-YARN ResourceManager should distribute tasks to NodeManagers running on worker nodes.
+Worker Node
+├── DataNode
+└── NodeManager
+```
 
-The cluster should be able to run a sample MapReduce job successfully, demonstrating distributed processing.
+> 여러 노드가 하나의 Hadoop 클러스터로 연결되어 저장과 연산을 분산해서 수행할 수 있는가?
 
-### Persistence:
-The Hadoop data directory within the Docker containers should be configured to persist data between container restarts.
+## 비교
 
-Ensure that the data stored in HDFS remains intact even if the containers are stopped and restarted.
+| 구분 | W3M1 | W3M2 |
+|---|---|---|
+| 중심 주제 | HDFS 저장 구조와 복구 | 멀티 노드 Hadoop 클러스터 구축 |
+| 주요 서비스 | NameNode, DataNode | NameNode, DataNode, ResourceManager, NodeManager |
+| 주요 기능 | 파일 저장, 조회, 재시작 후 복구 | 파일 분산 저장, 작업 분배, MapReduce 실행 |
+| Docker 사용 | HDFS 컨테이너와 Volume 확인 | 여러 컨테이너를 각각 하나의 노드처럼 구성 |
+| 검증 포인트 | 데이터가 Volume에 유지되는가 | Worker가 클러스터에 참여하고 작업을 처리하는가 |
 
-### Documentation:
-Provide clear instructions on how to build the Docker images and run the containers.
+# Docker에서 컨테이너를 이용하는 방법
 
-Include steps for configuring Hadoop within the containers and starting the services.
+Docker는 컨테이너마다 독립된 실행 환경을 제공한다. 따라서 한 컨테이너 안에서 여러 Hadoop 노드를 실행하는 것이 아니라, **여러 컨테이너를 각각 하나의 Hadoop 노드처럼 사용한다.**
 
-Document how to perform basic HDFS operations, such as creating directories, uploading files, running MapReduce jobs, and retrieving files.
+```text
+Docker Host
+├── master 컨테이너 = Hadoop Master 노드
+├── worker1 컨테이너 = Hadoop Worker 노드 1
+└── worker2 컨테이너 = Hadoop Worker 노드 2
+```
 
-## 프로그래밍 요구사항
-### Docker Setup:
-Install Docker on your local machine if it is not already installed.
+실제 Hadoop 환경에서는 여러 대의 서버를 연결하지만, 이번 과제에서는 여러 컨테이너가 각각 서버의 역할을 대신한다.
 
-Create Dockerfiles for configuring the Hadoop environment for multiple nodes.
+| 실제 Hadoop 환경 | Docker 실습 환경 |
+|---|---|
+| 물리 서버 1대 | 컨테이너 1개 |
+| 서버 운영체제 | 컨테이너 실행 환경 |
+| 서버 IP 주소 | 컨테이너 이름 또는 내부 IP |
+| 서버 간 네트워크 | Docker Network |
+| 서버 디스크 | Docker Volume |
 
-Build Docker images from the Dockerfiles to set up a Hadoop master node and at least one Hadoop worker node.
 
-### Hadoop Configuration:
-Configure Hadoop core-site.xml, hdfs-site.xml, mapred-site.xml, and yarn-site.xml files for a multi-node cluster.
+# 진행 흐름
 
-Set up Hadoop environment variables for both the master and worker nodes.
+```text
+1. Hadoop Master와 Worker용 Docker 이미지 생성
+2. Docker Compose로 Master와 Worker 컨테이너 실행
+3. 모든 컨테이너를 같은 Docker Network에 연결
+4. Master에서 NameNode와 ResourceManager 실행
+5. Worker에서 DataNode와 NodeManager 실행
+6. Worker가 Master에 자신을 등록했는지 확인
+7. HDFS 디렉터리 생성 및 파일 업로드
+8. YARN을 이용해 MapReduce 작업 실행
+9. HDFS와 YARN Web UI에서 클러스터 상태 확인
+10. 컨테이너 재시작 후 HDFS 데이터 유지 여부 확인
+```
 
-Format the HDFS namenode on the master node.
+이번 과제의 전체 구조는 다음과 같다.
 
-### Network Configuration:
-Ensure that the Docker containers can communicate with each other by setting up a Docker network.
+```text
+Docker Host
+│
+├── master 컨테이너
+│   ├── NameNode
+│   └── ResourceManager
+│
+├── worker1 컨테이너
+│   ├── DataNode
+│   └── NodeManager
+│
+├── Docker Network
+│   └── Master와 Worker 간 통신
+│
+└── Docker Volumes
+    ├── NameNode 메타데이터 유지
+    └── DataNode 블록 데이터 유지
+```
 
-Configure the Hadoop cluster such that the master node recognizes and can communicate with the worker node(s).
-
-### Start Hadoop Services:
-Start the Hadoop NameNode service on the master node and the Hadoop DataNode service on each worker node.
-
-Ensure that HDFS is running correctly across all nodes.
-
-Start YARN ResourceManager and NodeManager services on the respective nodes.
-
-### Data Operations:
-Create a directory in HDFS.
-
-Upload a sample file from the local file system to HDFS.
-
-Retrieve the file from HDFS to ensure it was uploaded successfully.
-
-Run a MapReduce job on the Hadoop cluster to validate its functionality.
-
-## 예상결과 및 동작예시
-### Running Containers:
-Running Docker containers with a Hadoop master node and at least one worker node.
-
-All Hadoop services (namenode, datanode, ResourceManager, NodeManager, etc.) should be up and running within the containers.
-
-### HDFS Operations:
-The ability to create a directory in HDFS from the master node.
-
-Successfully upload a file from the local file system to HDFS.
-
-Retrieve the uploaded file from HDFS to the local file system.
-
-### Cluster Operations:
-The ability to run a sample MapReduce job on the Hadoop cluster.
-
-Verify that the job utilizes both the master and worker nodes for processing.
-
-### Accessibility:
-Access the HDFS and YARN web interfaces from the host machine to verify the cluster's status and perform file system and job monitoring operations.
-
-# Submission:
-Submit the Dockerfiles and any other configuration files used for setting up the Hadoop cluster.
-
-Provide a README file with step-by-step instructions for building the Docker images, running the containers, and performing HDFS and MapReduce operations.
