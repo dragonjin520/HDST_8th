@@ -8,15 +8,9 @@ Lectures/
 ├── W2
 ```
 
-## Repository Structure
-```text
-retrospectives/
-├── daily
-├── weekly
-```
+
 
 ## Missions
 
-- [W1M1](./missions/W1/mission1_mtcars)
-- [W1M2](./missions/W1/mission2_SQL)
-- [W1M3](./missions/W1/mission3_ETL)
+- [W1](./missions/W1)
+- [W2](./missions/W2)
