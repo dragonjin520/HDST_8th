@@ -1,6 +1,8 @@
+x-hadoop-image: &hadoop-image hadoop-base:3.3.6
+
 services:
   master:
-    image: w3m2-a-hadoop:latest
+    image: *hadoop-image
     build:
       context: .
       dockerfile: Dockerfile.master
@@ -20,7 +22,7 @@ services:
     command: ["bash", "-c", "tail -f /dev/null"]
 
   worker1:
-    image: w3m2-a-hadoop:latest
+    image: *hadoop-image
     container_name: hadoop-worker1
     hostname: worker1
     environment:
