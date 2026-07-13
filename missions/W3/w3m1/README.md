@@ -6,6 +6,7 @@
     - 노드설정, 저장방식, 실행방식, 환경변수
 3. Hadoop 시작 스크립트 작성
 4. Docker 이미지 빌드
+   
 5. Docker Volume과 포트를 연결해 컨테이너 실행
 6. NameNode와 DataNode 실행 상태 확인
 7. HDFS 디렉터리 생성
