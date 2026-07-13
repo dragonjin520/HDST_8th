@@ -19,11 +19,12 @@ services:
       - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
       - ./config/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
       - ./config/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./scripts/start-hadoop.sh:/opt/scripts/start-hadoop.sh:ro
     networks:
       - hadoop-network
     stdin_open: true
     tty: true
-    command: ["bash", "-c", "tail -f /dev/null"]
+    command: ["bash", "/opt/scripts/start-hadoop.sh"]
 
   worker1:
     image: *hadoop-image
@@ -37,13 +38,14 @@ services:
       - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
       - ./config/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
       - ./config/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./scripts/start-hadoop.sh:/opt/scripts/start-hadoop.sh:ro
     networks:
       - hadoop-network
     depends_on:
       - master
     stdin_open: true
     tty: true
-    command: ["bash", "-c", "tail -f /dev/null"]
+    command: ["bash", "/opt/scripts/start-hadoop.sh"]
 
 networks:
   hadoop-network:
