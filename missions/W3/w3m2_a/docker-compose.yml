@@ -1,0 +1,44 @@
+services:
+  master:
+    image: w3m2-a-hadoop:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.master
+    container_name: hadoop-master
+    hostname: master
+    environment:
+      NODE_ROLE: master
+    ports:
+      - "9870:9870"
+      - "8088:8088"
+    volumes:
+      - namenode-data:/data/hdfs/namenode
+    networks:
+      - hadoop-network
+    stdin_open: true
+    tty: true
+    command: ["bash", "-c", "tail -f /dev/null"]
+
+  worker1:
+    image: w3m2-a-hadoop:latest
+    container_name: hadoop-worker1
+    hostname: worker1
+    environment:
+      NODE_ROLE: worker
+    volumes:
+      - datanode1-data:/data/hdfs/datanode
+    networks:
+      - hadoop-network
+    depends_on:
+      - master
+    stdin_open: true
+    tty: true
+    command: ["bash", "-c", "tail -f /dev/null"]
+
+networks:
+  hadoop-network:
+    driver: bridge
+
+volumes:
+  namenode-data:
+  datanode1-data:

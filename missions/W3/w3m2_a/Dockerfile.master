@@ -19,11 +19,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -q "https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
+RUN wget \
+    --progress=dot:giga \
+    --timeout=30 \
+    --tries=3 \
+    "https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
     && tar -xzf "hadoop-${HADOOP_VERSION}.tar.gz" -C /opt \
     && mv "/opt/hadoop-${HADOOP_VERSION}" "${HADOOP_HOME}" \
     && rm "hadoop-${HADOOP_VERSION}.tar.gz"
-
+    
 RUN mkdir -p \
     /data/hdfs/namenode \
     /data/hdfs/datanode \
