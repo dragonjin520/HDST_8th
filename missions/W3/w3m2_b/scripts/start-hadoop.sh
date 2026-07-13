@@ -2,11 +2,12 @@
 set -e
 
 mkdir -p /opt/hadoop/logs
+mkdir -p /hadoop/dfs/name /hadoop/dfs/data /hadoop/tmp
 
 echo "Starting Hadoop node: ${NODE_ROLE}"
 
 if [ "${NODE_ROLE}" = "master" ]; then
-    if [ ! -d "/data/hdfs/namenode/current" ]; then
+    if [ ! -d "/hadoop/dfs/name/current" ]; then
         echo "Formatting NameNode..."
         hdfs namenode -format -force -nonInteractive
     fi
@@ -15,8 +16,8 @@ if [ "${NODE_ROLE}" = "master" ]; then
     yarn --daemon start resourcemanager
 
 elif [ "${NODE_ROLE}" = "worker" ]; then
-    echo "Waiting for NameNode at master:9000..."
-    until bash -c '</dev/tcp/master/9000' 2>/dev/null; do
+    echo "Waiting for NameNode at namenode:9000..."
+    until bash -c '</dev/tcp/namenode/9000' 2>/dev/null; do
         sleep 2
     done
 
@@ -30,4 +31,4 @@ fi
 
 echo "Hadoop services started."
 
-tail -f /dev/null
+exec tail -f /dev/null

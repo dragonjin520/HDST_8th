@@ -1,8 +1,9 @@
-x-hadoop-image: &hadoop-image hadoop-base:3.3.6
+x-hadoop-master-image: &hadoop-master-image hadoop-master:3.3.6
+x-hadoop-worker-image: &hadoop-worker-image hadoop-worker:3.3.6
 
 services:
   namenode:
-    image: *hadoop-image
+    image: *hadoop-master-image
     build:
       context: .
       dockerfile: Dockerfile.master
@@ -28,7 +29,10 @@ services:
     command: ["bash", "/opt/scripts/start-hadoop.sh"]
 
   worker1:
-    image: *hadoop-image
+    image: *hadoop-worker-image
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
     container_name: hadoop-worker1
     hostname: worker1
     environment:
@@ -49,7 +53,10 @@ services:
     command: ["bash", "/opt/scripts/start-hadoop.sh"]
 
   worker2:
-    image: *hadoop-image
+    image: *hadoop-worker-image
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
     container_name: hadoop-worker2
     hostname: worker2
     environment:

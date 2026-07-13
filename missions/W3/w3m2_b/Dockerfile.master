@@ -29,10 +29,13 @@ RUN wget \
     && rm "hadoop-${HADOOP_VERSION}.tar.gz"
     
 RUN mkdir -p \
-    /data/hdfs/namenode \
-    /data/hdfs/datanode \
-    /run/sshd
+    /hadoop/dfs/name \
+    /hadoop/dfs/data \
+    /hadoop/tmp \
+    /opt/hadoop/logs \
+    /run/sshd \
+    && chmod -R 755 /hadoop /opt/hadoop/logs
 
 WORKDIR /opt/hadoop
 
-CMD ["bash"]
+CMD ["bash", "/opt/scripts/start-hadoop.sh"]
