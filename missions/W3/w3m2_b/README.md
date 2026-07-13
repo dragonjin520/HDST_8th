@@ -298,3 +298,436 @@ Expected: hdfs://namenode:9000
 - 잘못 설정했을 때 발생할 수 있는 문제
 
 조사한 내용을 팀원들과 공유하고, 논의한 결과를 팀 위키에 정리한다.
+# W3M2-B: Docker 기반 Hadoop 멀티 노드 클러스터 설정 및 검증
+
+## 1. 학습 목표
+
+W3M2-A에서 구성한 Docker 기반 Hadoop 멀티 노드 클러스터를 바탕으로, Hadoop의 주요 설정 파일을 수정하고 실제 적용 여부를 자동 검증한다.
+
+이번 과제에서는 다음 내용을 수행한다.
+
+- Hadoop 설정 파일 4종 수정
+- 기존 설정 파일 백업
+- NameNode 1개와 DataNode 2개로 멀티 노드 클러스터 구성
+- HDFS 기본 복제 계수 2 적용
+- Hadoop 서비스 재시작
+- 설정값 자동 검증
+- HDFS 파일 복제 상태 확인
+- YARN 기반 MapReduce WordCount 실행 확인
+
+---
+
+## 2. W3M2-A와의 차이점
+
+W3M2-A와 W3M2-B는 같은 Hadoop 클러스터 환경을 사용하지만 과제의 중심이 다르다.
+
+| 구분 | W3M2-A | W3M2-B |
+|---|---|---|
+| 핵심 목표 | Docker 기반 Hadoop 멀티 노드 클러스터 구성 | Hadoop 설정 변경 및 적용 결과 검증 |
+| 주요 작업 | NameNode, DataNode, ResourceManager, NodeManager 실행 | XML 설정 수정, 백업, 재시작, 자동 검증 |
+| HDFS 확인 | 파일 업로드와 기본 동작 확인 | 복제 계수 2와 블록 배치 상태 확인 |
+| YARN 확인 | MapReduce 실행 가능 여부 확인 | YARN 프레임워크 및 NodeManager 등록 상태 확인 |
+| 자동화 | 클러스터 실행 스크립트 | 설정 변경 스크립트와 검증 스크립트 |
+| 최종 결과 | 실행 가능한 Hadoop 클러스터 | 요구 설정이 정확히 적용된 검증 가능한 클러스터 |
+
+> W3M2-A는 Hadoop 클러스터의 기반 환경을 만드는 과제이고, W3M2-B는 그 환경의 설정을 요구사항에 맞게 변경하고 검증하는 과제이다.
+
+---
+
+## 3. 프로젝트 구성
+
+```text
+w3m2_b/
+├── Dockerfile.base
+├── Dockerfile.master
+├── Dockerfile.worker
+├── README.md
+├── docker-compose.yml
+├── data/
+│   └── sample.txt
+├── config/
+│   ├── original/
+│   │   ├── core-site.xml
+│   │   ├── hdfs-site.xml
+│   │   ├── mapred-site.xml
+│   │   └── yarn-site.xml
+│   └── modified/
+│       ├── core-site.xml
+│       ├── hdfs-site.xml
+│       ├── mapred-site.xml
+│       └── yarn-site.xml
+└── scripts/
+    ├── modify_config.sh
+    ├── start-hadoop.sh
+    └── verify_config.sh
+```
+
+각 디렉터리의 역할은 다음과 같다.
+
+| 경로 | 역할 |
+|---|---|
+| `config/original/` | 수정 전 Hadoop 설정 파일 보관 |
+| `config/modified/` | 컨테이너가 실제로 사용하는 수정된 설정 파일 |
+| `scripts/modify_config.sh` | 설정값 수정 및 XML 문법 검증 |
+| `scripts/start-hadoop.sh` | 노드 역할에 따라 Hadoop 데몬 시작 |
+| `scripts/verify_config.sh` | 설정과 실제 동작을 자동 검증 |
+| `Dockerfile.base` | Java와 Hadoop이 설치된 공통 기반 이미지 생성 |
+| `Dockerfile.master` | NameNode와 ResourceManager용 이미지 |
+| `Dockerfile.worker` | DataNode와 NodeManager용 이미지 |
+
+---
+
+## 4. Docker 이미지 구성
+
+Hadoop을 master와 worker 이미지에서 각각 다운로드하지 않도록 공통 base 이미지를 사용한다.
+
+```text
+Dockerfile.base
+└── Ubuntu 22.04, Java 11, Hadoop 3.3.6 설치
+
+Dockerfile.master
+└── FROM hadoop-base:3.3.6
+
+Dockerfile.worker
+└── FROM hadoop-base:3.3.6
+```
+
+최초 1회 base 이미지를 생성한다.
+
+```bash
+docker build -t hadoop-base:3.3.6 -f Dockerfile.base .
+```
+
+이미 `hadoop-base:3.3.6` 이미지가 존재하면 다시 빌드할 필요가 없다.
+
+```bash
+docker images hadoop-base:3.3.6
+```
+
+master와 worker 이미지를 빌드한다.
+
+```bash
+docker compose build
+```
+
+---
+
+## 5. Hadoop 설정 파일
+
+### `core-site.xml`
+
+Hadoop 공통 설정과 기본 파일 시스템 정보를 관리한다.
+
+| 설정 | 적용 값 |
+|---|---|
+| `fs.defaultFS` | `hdfs://namenode:9000` |
+| `hadoop.tmp.dir` | `/hadoop/tmp` |
+| `io.file.buffer.size` | `131072` |
+
+### `hdfs-site.xml`
+
+HDFS 저장 구조와 NameNode, DataNode 설정을 관리한다.
+
+| 설정 | 적용 값 |
+|---|---|
+| `dfs.replication` | `2` |
+| `dfs.blocksize` | `134217728` |
+| `dfs.namenode.name.dir` | `/hadoop/dfs/name` |
+| `dfs.datanode.data.dir` | `/hadoop/dfs/data` |
+
+### `mapred-site.xml`
+
+MapReduce 실행 프레임워크와 작업 설정을 관리한다.
+
+| 설정 | 적용 값 |
+|---|---|
+| `mapreduce.framework.name` | `yarn` |
+| `mapreduce.jobhistory.address` | `namenode:10020` |
+| `mapreduce.task.io.sort.mb` | `256` |
+| `mapreduce.application.classpath` | Hadoop MapReduce classpath |
+
+### `yarn-site.xml`
+
+YARN의 ResourceManager, NodeManager, 컨테이너 자원 설정을 관리한다.
+
+| 설정 | 적용 값 |
+|---|---|
+| `yarn.resourcemanager.hostname` | `namenode` |
+| `yarn.resourcemanager.address` | `namenode:8032` |
+| `yarn.nodemanager.resource.memory-mb` | `8192` |
+| `yarn.scheduler.minimum-allocation-mb` | `1024` |
+| `yarn.nodemanager.aux-services` | `mapreduce_shuffle` |
+
+---
+
+## 6. Docker Compose 구성
+
+클러스터는 다음 세 개의 컨테이너로 구성된다.
+
+| 컨테이너 | 역할 |
+|---|---|
+| `hadoop-master` | NameNode, ResourceManager |
+| `hadoop-worker1` | DataNode, NodeManager |
+| `hadoop-worker2` | DataNode, NodeManager |
+
+두 개의 DataNode를 사용하므로 `dfs.replication=2`를 실제로 검증할 수 있다.
+
+주요 포트는 다음과 같다.
+
+| 포트 | 용도 |
+|---|---|
+| `9000` | HDFS RPC |
+| `9870` | NameNode Web UI |
+| `8088` | YARN ResourceManager Web UI |
+
+---
+
+## 7. 설정 변경 스크립트
+
+`modify_config.sh`는 기본적으로 `config/modified/`의 XML 파일을 수정하고, `config/original/`에는 기존 원본을 보관한다.
+
+주요 동작은 다음과 같다.
+
+1. 설정 디렉터리와 파일 존재 여부 확인
+2. 원본 설정 파일 백업
+3. 지정된 property 수정 또는 추가
+4. XML 문법 검증
+5. 실행 중인 Docker Compose 컨테이너 재시작
+6. 단계별 `PASS`, `INFO`, `FAIL` 출력
+
+실행 권한을 추가한다.
+
+```bash
+chmod +x scripts/modify_config.sh
+```
+
+기본 경로로 실행한다.
+
+```bash
+./scripts/modify_config.sh
+```
+
+경로를 직접 지정할 수도 있다.
+
+```bash
+./scripts/modify_config.sh config/modified config/original
+```
+
+---
+
+## 8. 클러스터 실행
+
+모든 스크립트에 실행 권한을 추가한다.
+
+```bash
+chmod +x scripts/*.sh
+```
+
+기존 컨테이너를 종료한다.
+
+```bash
+docker compose down
+```
+
+master와 worker 이미지를 빌드한다.
+
+```bash
+docker compose build
+```
+
+클러스터를 실행한다.
+
+```bash
+docker compose up -d
+```
+
+컨테이너 상태를 확인한다.
+
+```bash
+docker compose ps
+```
+
+정상이라면 다음 세 컨테이너가 모두 `Up` 상태여야 한다.
+
+```text
+hadoop-master
+hadoop-worker1
+hadoop-worker2
+```
+
+---
+
+## 9. Hadoop 데몬 확인
+
+```bash
+docker exec hadoop-master jps
+docker exec hadoop-worker1 jps
+docker exec hadoop-worker2 jps
+```
+
+예상 프로세스는 다음과 같다.
+
+```text
+hadoop-master
+- NameNode
+- ResourceManager
+```
+
+```text
+hadoop-worker1
+- DataNode
+- NodeManager
+```
+
+```text
+hadoop-worker2
+- DataNode
+- NodeManager
+```
+
+---
+
+## 10. 설정 및 동작 검증
+
+`verify_config.sh`는 Hadoop 설정값뿐 아니라 실제 HDFS와 YARN 동작도 함께 검증한다.
+
+```bash
+./scripts/verify_config.sh
+```
+
+검증 항목은 다음과 같다.
+
+### 설정값 검증
+
+- 기본 파일 시스템 URI
+- Hadoop 임시 디렉터리
+- 파일 입출력 버퍼 크기
+- HDFS 복제 계수
+- HDFS 블록 크기
+- NameNode 저장 경로
+- DataNode 저장 경로
+- MapReduce 실행 프레임워크
+- JobHistoryServer 주소
+- Map 출력 정렬 메모리
+- ResourceManager 주소
+- NodeManager 메모리
+- 최소 컨테이너 메모리
+- MapReduce shuffle 서비스
+
+### 데몬 검증
+
+- NameNode
+- ResourceManager
+- DataNode 2개
+- NodeManager 2개
+
+### 동작 검증
+
+- HDFS 테스트 파일 생성
+- 실제 복제 계수 2 확인
+- MapReduce WordCount 실행
+- `_SUCCESS` 결과 파일 확인
+- YARN 애플리케이션 기록 확인
+- YARN NodeManager 2개 등록 확인
+
+> Apple Silicon 환경에서는 `NativeCodeLoader` 경고가 출력될 수 있다. Hadoop 네이티브 라이브러리 대신 Java 구현을 사용한다는 의미이며, 과제 실행 실패는 아니다.
+
+---
+
+## 11. 주요 수동 검증 명령어
+
+### Hadoop 설정값 확인
+
+모든 설정값은 `hdfs getconf -confKey`를 사용해 조회할 수 있다.
+
+```bash
+hdfs getconf -confKey fs.defaultFS
+hdfs getconf -confKey hadoop.tmp.dir
+hdfs getconf -confKey io.file.buffer.size
+hdfs getconf -confKey dfs.replication
+hdfs getconf -confKey dfs.blocksize
+hdfs getconf -confKey dfs.namenode.name.dir
+hdfs getconf -confKey dfs.datanode.data.dir
+hdfs getconf -confKey mapreduce.framework.name
+hdfs getconf -confKey mapreduce.jobhistory.address
+hdfs getconf -confKey mapreduce.task.io.sort.mb
+hdfs getconf -confKey yarn.resourcemanager.address
+hdfs getconf -confKey yarn.nodemanager.resource.memory-mb
+hdfs getconf -confKey yarn.scheduler.minimum-allocation-mb
+hdfs getconf -confKey yarn.nodemanager.aux-services
+```
+
+컨테이너 외부에서 확인하는 예시는 다음과 같다.
+
+```bash
+docker exec hadoop-master \
+  hdfs getconf -confKey mapreduce.framework.name
+```
+
+### HDFS 복제 계수 확인
+
+```bash
+echo "hello hadoop" > /tmp/test.txt
+hdfs dfs -mkdir -p /w3m2-test/input
+hdfs dfs -put -f /tmp/test.txt /w3m2-test/input/test.txt
+hdfs fsck /w3m2-test/input/test.txt -files -blocks -locations
+```
+
+출력에서 다음 값을 확인한다.
+
+```text
+Average block replication: 2.0
+```
+
+### YARN NodeManager 확인
+
+```bash
+yarn node -list
+```
+
+정상 출력 예시는 다음과 같다.
+
+```text
+Total Nodes:2
+worker1 ... RUNNING
+worker2 ... RUNNING
+```
+
+### MapReduce WordCount 실행
+
+```bash
+hadoop jar "$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-"*.jar \
+  wordcount /w3m2-test/input /w3m2-test/output
+```
+
+YARN 애플리케이션 기록을 확인한다.
+
+```bash
+yarn application -list -appStates ALL
+```
+
+---
+
+## 12. 최종 검증 결과
+
+최종 자동 검증 결과는 다음과 같다.
+
+```text
+========== 검증 결과 ==========
+PASS: 19
+FAIL: 0
+[PASS] 모든 Hadoop 설정 및 동작 검증을 통과했습니다.
+```
+
+다음 항목이 모두 정상적으로 확인되었다.
+
+- Hadoop 설정값 적용
+- NameNode와 ResourceManager 실행
+- DataNode 2개 실행
+- NodeManager 2개 실행 및 YARN 등록
+- HDFS 복제 계수 2 적용
+- MapReduce WordCount 실행
+- MapReduce 결과 파일 생성
+- YARN 애플리케이션 기록 확인
+
+---
