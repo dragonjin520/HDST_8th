@@ -6,14 +6,39 @@
     - 노드설정, 저장방식, 실행방식, 환경변수
 3. Hadoop 시작 스크립트 작성
 4. Docker 이미지 빌드
-   
+   ```text
+   docker build -t hadoop-single-node .
+   ```
 5. Docker Volume과 포트를 연결해 컨테이너 실행
+    
+    ```text
+    docker run ...
+    ```
 6. NameNode와 DataNode 실행 상태 확인
+
+    ```text
+    jps
+    ```
 7. HDFS 디렉터리 생성
+
+    ```text
+    hdfs dfs -mkdir -p /user/hadoop/input
+    ```
 8. 샘플 파일 생성 및 업로드
+    ```text
+    hdfs dfs -put sample.txt /user/hadoop/input/
+    hdfs dfs -ls /user/hadoop/input
+    hdfs dfs -cat /user/hadoop/input/sample.txt
+    ```
 9. HDFS에서 파일 내용 확인
 10. 파일을 다시 로컬로 가져오기
+    ```text
+    hdfs dfs -get /user/hadoop/input/sample.txt retrieved.txt
+    ```
 11. 브라우저에서 HDFS Web UI 확인
+    ```text
+    http://localhost:9870
+    ```
 12. 컨테이너 재시작 후 데이터 유지 여부 확인
 
 
