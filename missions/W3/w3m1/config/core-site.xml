@@ -1,1 +1,11 @@
 # 기본 파일 시스템 설정
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+    <!-- Hadoop의 기본 파일 시스템을 HDFS로 설정 -->
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>

@@ -1,1 +1,23 @@
 # HDFS 저장 경로와 복제 설정
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+    <!-- 단일 노드 환경이므로 HDFS 블록 복제 개수를 1로 설정 -->
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+
+    <!-- NameNode 메타데이터 저장 경로 -->
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///hadoop/dfs/name</value>
+    </property>
+
+    <!-- DataNode 데이터 블록 저장 경로 -->
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///hadoop/dfs/data</value>
+    </property>
+</configuration>
