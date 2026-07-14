@@ -1,0 +1,3 @@
+negative	89534
+neutral	1248250
+positive	262216
