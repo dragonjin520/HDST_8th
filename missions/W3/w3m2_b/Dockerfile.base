@@ -22,6 +22,7 @@ RUN apt-get update \
         rsync \
         wget \
         curl \
+        python3 \
         procps \
         net-tools \
         iputils-ping \
