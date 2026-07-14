@@ -76,7 +76,6 @@ I expected the car to look much better.
 | 방법 | 핵심 아이디어 | 장점 | 한계 |
 |---|---|---|---|
 | 정답 레이블 재사용 | Sentiment140의 polarity 값을 그대로 사용 | 가장 단순하고 정답 비교 가능 | 학습 데이터에는 실제 Neutral(2) 데이터가 없어 Neutral 분류가 불가능 |
-| 텍스트 정규화 | 대소문자, 문장부호, 반복 문자, 단어 형태를 통일 | 표현 차이로 인한 누락 감소 | 정규화만으로는 감성을 결정할 수 없음 |
 | VADER | 단어별 감성 강도를 합산하고 정규화하여 분류 | 부정어, 강조 표현, 이모티콘, 은어 반영 | 감성 사전에 없는 표현과 복잡한 문맥에는 한계 |
 | 부정어 규칙 | `not good`과 같은 표현의 감성을 반전 | 단순 키워드 방식의 대표적 오류 보완 | 규칙이 많아질수록 관리가 복잡해짐 |
 | 머신러닝 | 라벨 데이터를 이용해 분류 기준을 학습 | 여러 단어의 패턴과 문맥을 일부 반영 | 학습 데이터, 전처리, 모델 관리 필요 |
@@ -91,7 +90,7 @@ I expected the car to look much better.
 ### 적용 방법
 
 - `vaderSentiment` 라이브러리의 `SentimentIntensityAnalyzer` 사용
-- 트윗별 감성 점수 계산 (-4~+4)
+- 트윗별 감성 점수 계산
 - 최종 점수를 기준으로 Negative, Neutral, Positive 분류
 - Mapper에서 감성 Key와 `1` 출력
 - Reducer에서 감성별 개수 합산
@@ -103,6 +102,7 @@ I expected the car to look much better.
 → 텍스트 정규화
 → 단어별 감성 강도 계산
 → 부정어·강조 표현 반영
+→ 감성 점수 정규화
 → 감성 Label 결정
 → Mapper가 Label과 1 출력
 → Reducer가 Label별 개수 집계

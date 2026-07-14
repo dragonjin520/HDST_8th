@@ -1,4 +1,4 @@
-# W3M2b 팀 활동 — Hadoop 설정 파일(XML) 톺아보기
+# W3M2b 팀 활동
 
 **과제 내용**: `core-site.xml`, `hdfs-site.xml`, `yarn-site.xml`, `mapred-site.xml` 4개
 파일을 살펴보고, 중요하거나 유용하다고 생각되는 설정을 각자 골라 용법을 파악한 뒤 팀
@@ -6,7 +6,19 @@
 
 ---
 
-## 1. core-site.xml — 하둡 코어 및 공통 설정
+## 1. 활동 개요
+
+본 과제에서는 하둡의 주요 설정 파일인 `core-site.xml`, `hdfs-site.xml`, `yarn-site.xml`, `mapred-site.xml`을 살펴보고, 중요하거나 유용한 설정을 선정하여 용법을 파악한 후 팀 토의를 통해 내용을 정리하였다.
+
+---
+
+## 2. Hadoop 설정 파일의 역할
+
+하둡 시스템은 여러 설정 파일로 구성되어 있으며, 각 파일은 역할에 따라 분리되어 있다. 하지만 실행 시점에는 이들 설정이 하나의 통합 설정 풀로 합쳐져 하둡 프레임워크가 참조한다.
+
+---
+
+## 3. core-site.xml — 하둡 코어 및 공통 설정
 
 하둡 시스템 전체(HDFS, MapReduce, YARN)가 공통으로 참조하는 기본 정보와 입출력 설정.
 
@@ -32,7 +44,7 @@ HDFS에서 삭제한 파일을 즉시 영구 삭제하지 않고 `.Trash` 디렉
 
 ---
 
-## 2. hdfs-site.xml — HDFS 저장소 설정
+## 4. hdfs-site.xml — HDFS 저장소 설정
 
 NameNode/DataNode 및 데이터 복제(Replication) 정책 등 저장 공간 관련 설정.
 
@@ -58,7 +70,7 @@ NameNode/DataNode 및 데이터 복제(Replication) 정책 등 저장 공간 관
 
 ---
 
-## 3. yarn-site.xml — 리소스 관리 및 스케줄러 설정
+## 5. yarn-site.xml — 리소스 관리 및 스케줄러 설정
 
 클러스터의 자원(CPU, Memory)을 효율적으로 분배·스케줄링하는 설정.
 
@@ -76,8 +88,7 @@ NameNode/DataNode 및 데이터 복제(Replication) 정책 등 저장 공간 관
 | `yarn.scheduler.maximum-allocation-mb` | 2048 | **가장 큰 방의 최대 크기** | 컨테이너 하나가 요청할 수 있는 메모리 상한. 어떤 작업이 3GB짜리 방을 요청하면, 최대치가 2GB이므로 예외(`InvalidResourceRequestException`)를 던지고 거절함 |
 | `yarn.scheduler.minimum-allocation-mb` | 256 | **가장 작은 방의 크기 (배수 단위)** | 컨테이너에 줄 수 있는 최소 메모리 단위이자 청크(chunk) 크기. 100MB만 필요해도 최소 단위인 256MB를 강제로 받고, 300MB를 요청하면 256MB의 배수인 512MB를 받음 |
 
-> **팀 메모**: `yarn.nodemanager.resource.memory-mb`와 `yarn.scheduler.maximum-allocation-mb`
-> 둘 다 "큰 데이터 처리할 때 늘리면 유리할 듯"이라는 의견.
+YARN 메모리 설정 3종(`resource.memory-mb`, `scheduler.maximum-allocation-mb`, `scheduler.minimum-allocation-mb`)은 "사무실 총 평수 / 가장 큰 방 / 가장 작은 방 단위"로 이해하면 관계가 명확해진다.
 
 ### 추가하면 유용한 설정 (추천)
 
@@ -94,7 +105,7 @@ ResourceManager가 컨테이너 하나에 할당할 수 있는 최소 메모리 
 
 ---
 
-## 4. mapred-site.xml — MapReduce 실행 설정
+## 6. mapred-site.xml — MapReduce 실행 설정
 
 데이터 분석 작업을 수행하는 MapReduce 프레임워크의 상세 설정.
 
@@ -119,92 +130,63 @@ ResourceManager가 컨테이너 하나에 할당할 수 있는 최소 메모리 
 Reducer는 여러 Mapper의 중간 결과를 가져와 정렬·병합하는 Shuffle 작업을 수행하므로,
 작업 특성에 따라 Map 태스크보다 더 많은 메모리가 필요할 수 있다.
 
-### 서로 요청이 충돌할 때 — YARN 설정과의 관계
 
-다음 조건을 만족해야 한다.
+---
 
-```
+## 7. 팀 논의 종합
+
+팀원들은 개별 설정값을 단순히 나열하기보다 저장 안정성, 데이터 복제, 자원 할당, 작업 실행, 운영 관찰의 관점에서 설정 간 관계를 함께 살펴보았다. 특히 Docker 기반 실습 환경에서는 데이터 디렉터리의 볼륨 연결, 클러스터 규모에 맞는 복제 수, 제한된 메모리 안에서의 컨테이너 할당, 실제 작업 실행을 통한 검증이 중요하다는 데 의견을 모았다.
+
+---
+
+## 8. 검증 과정에서 발생한 문제와 두 가지 의문점
+
+### 의문점 1. YARN과 MapReduce 설정을 왜 `hdfs getconf`로 조회하는가?
+
+하둡 프레임워크는 내부적으로 자바(Java)의 `Configuration` 클래스로 설정을 관리한다. 사용자 입장에선 `core-site.xml`, `hdfs-site.xml`, `yarn-site.xml`, `mapred-site.xml`이 각각 분리된 파일처럼 보이지만, 하둡 시스템이 구동되거나 명령어가 실행될 때는 이 4개 파일 내용을 전부 긁어모아 하나의 거대한 메모리 공간(설정 풀)에 통째로 올린다. 따라서 하둡 명령어가 실행되면, 그 내부에서는 이게 HDFS 설정인지 YARN 설정인지 구별하지 않고 하나의 거대한 키-값(Key-Value) 딕셔너리에서 값을 찾는다.
+
+"설정 풀에서 특정 키(`mapreduce.framework.name`)의 값을 꺼내와라"라는 기능을 하는 도구가 `getconf`다. 하둡 개발자들이 이 조회 도구(`GetConf` 클래스)를 처음 만들 때, 하둡의 가장 기본 뼈대인 `hdfs` 명령어의 하위 도구로 패키징해두었다.
+
+- `yarn getconf`나 `mapred getconf`라는 명령어는 아예 존재하지 않는다.
+- 오직 `hdfs getconf`만 존재한다.
+
+간단히 비유하자면, 윈도우의 "작업 관리자"가 시스템 전체 정보를 통합해서 보여주듯, `hdfs getconf`는 하둡 설정 전체를 통합 조회하는 도구이다.
+
+즉, `hdfs getconf`는 이름과 달리 HDFS 설정만 읽는 명령이 아니라, 현재 로드된 Hadoop 전체 설정에서 특정 Key의 값을 조회하는 도구로 이해할 수 있다.
+
+---
+
+### 의문점 2. YARN과 MapReduce의 자원 요청이 충돌하면 어떤 설정이 우선하는가?
+
+`yarn-site.xml`은 클러스터 전체에서 허용할 수 있는 자원 범위를 정하고, `mapred-site.xml`은 개별 Map 또는 Reduce 태스크가 요청할 자원량을 정한다.
+
+따라서 두 설정이 충돌할 경우에는 YARN의 스케줄러 정책이 상위 제약 조건으로 적용된다. MapReduce 태스크는 원하는 메모리를 요청할 수 있지만, 그 요청값은 반드시 YARN이 허용한 최소·최대 범위 안에 있어야 한다.
+
+```text
 yarn.scheduler.minimum-allocation-mb
     ≤ mapreduce.reduce.memory.mb
     ≤ yarn.scheduler.maximum-allocation-mb
 ```
 
-예를 들어 YARN 최대 할당량이 2048MB인데 Reduce 태스크가 3072MB를 요청하면 자원 요청이
-거부된다.
+Map 태스크도 동일한 관계를 만족해야 한다.
+
+```text
+yarn.scheduler.minimum-allocation-mb
+    ≤ mapreduce.map.memory.mb
+    ≤ yarn.scheduler.maximum-allocation-mb
+```
+
+예를 들어 `yarn.scheduler.maximum-allocation-mb`가 `2048`인데 Reduce 태스크가 `mapreduce.reduce.memory.mb=3072`를 요청하면, ResourceManager는 허용 범위를 초과한 요청으로 판단하여 작업을 거부한다.
+
+반대로 MapReduce 태스크가 YARN의 최소 할당량보다 작은 메모리를 요청하면, 실제 할당은 YARN의 최소 단위에 맞춰 조정될 수 있다. 예를 들어 최소 할당량이 `256MB`인 환경에서 태스크가 `100MB`를 요청하더라도 실제 컨테이너는 최소 `256MB`를 할당받는다.
+
+즉, MapReduce는 태스크별 희망 자원량을 요청하고, YARN은 클러스터 전체 정책에 따라 그 요청을 허용·조정·거부한다. 따라서 자원 설정의 최종 우선권은 YARN에 있다.
 
 ---
 
-## 5. 팀에서 겪은 문제 — `hdfs getconf` vs `yarn getconf`
+## 9. 종합 결론
 
-### 증상
-
-검증 스크립트에서 `hadoop getconf`, `yarn getconf`가 값 대신 사용법(usage) 도움말을
-출력하며 전부 FAIL.
-
-```
-FAIL: ['hadoop', 'getconf', '-confKey', 'mapreduce.framework.name'] → Usage: hadoop [OPTIONS] SUBCOMMAND ...
-```
-
-### 각자의 해결 방법
-
-| 팀원 | 해결 방법 |
-|---|---|
-| 김용진_Albert | `docker exec hadoop-master hdfs getconf -confKey mapreduce.framework.name` |
-| 이관형 | core/hdfs 설정 6개는 `hdfs getconf -confKey`로 조회하고, mapred/yarn 설정 6개는 XML 파일을 직접 읽어서(Python `ElementTree`) 비교하도록 검증 스크립트를 두 그룹으로 분리 |
-| 문종민 | `run(["hdfs", "getconf", "-confKey", "mapreduce.framework.name"])`을 통해 MapReduce가 YARN으로 돌아가는지 확인 |
-| 최지욱 | `docker compose exec -T hadoop-master hdfs getconf -confKey mapreduce.framework.name` 명령을 마스터와 Worker 3개에서 각각 실행하고, 결과가 모두 `yarn`인지 검사 |
-
-### 의문점: YARN 설정값을 왜 `hdfs` 명령어로 조회하나?
-
-## 심화 설명
-
-**① 모든 XML은 하나의 "거대한 설정 풀(Pool)"로 합쳐진다**
-
-하둡 프레임워크는 내부적으로 자바(Java)의 `Configuration` 클래스로 설정을 관리한다.
-사용자 입장에선 `core-site.xml`, `hdfs-site.xml`, `yarn-site.xml`, `mapred-site.xml`이
-각각 분리된 파일처럼 보이지만, 하둡 시스템이 구동되거나 명령어가 실행될 때는 이 4개
-파일 내용을 전부 긁어모아 하나의 거대한 메모리 공간(설정 풀)에 통째로 올린다.
-
-따라서 하둡 명령어가 실행되면, 그 내부에서는 이게 HDFS 설정인지 YARN 설정인지 구별하지
-않고 하나의 거대한 키-값(Key-Value) 딕셔너리에서 값을 찾는다.
-
-**② `getconf`라는 돋보기가 하필 `hdfs` 패키지에 들어있을 뿐이다**
-
-"설정 풀에서 특정 키(`mapreduce.framework.name`)의 값을 꺼내와라"라는 기능을 하는 도구가
-`getconf`다. 하둡 개발자들이 이 조회 도구(`GetConf` 클래스)를 처음 만들 때, 하둡의 가장
-기본 뼈대인 `hdfs` 명령어의 하위 도구로 패키징해두었다.
-
-- `yarn getconf`나 `mapred getconf`라는 명령어는 아예 존재하지 않는다.
-- 오직 `hdfs getconf`만 존재한다.
-
-즉 `hdfs getconf`는 HDFS 전용 명령어가 아니라 **하둡 전체 설정 풀을 들여다보는 "공용
-돋보기"**인데, 이름만 `hdfs`로 시작할 뿐이다. YARN 설정을 조회할 때도 이 공용 돋보기를
-빌려 쓸 수밖에 없는 구조다.
-
-**③ 쉬운 비유 — 윈도우의 "작업 관리자"**
-
-컴퓨터의 그래픽카드(GPU)나 CPU 온도를 확인하고 싶으면 윈도우의 "작업 관리자(Task
-Manager)"나 "설정 앱"을 켠다.
-
-- 이때 "작업 관리자"는 소프트웨어 프로그램일 뿐이며, 하드웨어인 그래픽카드를 직접
-  제어하거나 지배하지 않는다.
-- 하지만 시스템 전체 정보를 모아 보여주는 통합 도구이기 때문에, 우리는 그걸 통해
-  그래픽카드 정보를 보는 것이다.
-
-마찬가지로 `hdfs getconf -confKey ...`는 "하둡 통합 설정 도구(`hdfs getconf`)야,
-MapReduce 설정 파일(`mapred-site.xml`)에 적어둔 `mapreduce.framework.name` 값 좀
-가져와봐"라고 요청하는, 지극히 정상적이고 독립적인 코드다.
-
----
-
-## 6. 팀 결론 요약
-
-- 4개 XML 파일은 **역할별로 분리되어 있지만, 실행 시점엔 하나의 설정 풀로 합쳐진다.**
-- `hdfs getconf`는 HDFS 전용이 아니라 **하둡 전체 설정을 조회하는 공용 도구**이며,
-  `yarn getconf`/`mapred getconf`는 애초에 존재하지 않는다.
-- YARN 메모리 설정 3종(`resource.memory-mb`, `scheduler.maximum-allocation-mb`,
-  `scheduler.minimum-allocation-mb`)은 "사무실 총 평수 / 가장 큰 방 / 가장 작은 방
-  단위"로 이해하면 관계가 명확해진다.
-- `mapreduce.reduce.memory.mb` 등 개별 작업 메모리 요청은 반드시
-  `yarn.scheduler.minimum-allocation-mb` ~ `yarn.scheduler.maximum-allocation-mb`
-  범위 안에 있어야 하며, 벗어나면 요청이 거부된다.
+- 4개 XML 파일은 역할별로 분리되어 있지만, 실행 시점에는 하나의 설정 풀로 합쳐진다.
+- `hdfs getconf`는 HDFS 전용이 아니라 하둡 전체 설정을 조회하는 공용 도구이며, `yarn getconf`나 `mapred getconf`는 존재하지 않는다.
+- YARN 메모리 설정 3종은 사무실 공간 비유를 통해 이해하면 관계가 명확해진다.
+- MapReduce 태스크의 메모리 요청은 YARN이 정한 최소·최대 할당 범위 안에서만 허용되므로, 두 설정이 충돌할 경우 최종 자원 정책은 YARN이 결정한다.
