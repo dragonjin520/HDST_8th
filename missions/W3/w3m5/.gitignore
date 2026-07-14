@@ -1,22 +1,21 @@
-MovieLens 원본 데이터
-
-data/ml-20m/
-data/ml-20m.zip
-
-Python 캐시
-
-pycache/
-*.py[cod]
-
-macOS
-
-.DS_Store
-
-임시 파일 및 로그
-
-*.log
-*.tmp
-
 정렬·검증 과정에서 생성되는 임시 결과
 
 output/*_sorted.txt
+
+# MovieLens 원본 데이터
+data/ml-20m/
+data/ml-20m.zip
+
+# 실행 임시 결과
+output/local_average_ratings.txt
+
+# Python 캐시
+__pycache__/
+*.py[cod]
+
+# macOS
+.DS_Store
+
+# 임시 파일 및 로그
+*.log
+*.tmp
