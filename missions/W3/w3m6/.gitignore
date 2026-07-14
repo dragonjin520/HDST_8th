@@ -11,6 +11,8 @@ data/sample/
 # Large review data files
 *.jsonl
 *.csv
+*.txt
+
 
 # macOS
 .DS_Store
