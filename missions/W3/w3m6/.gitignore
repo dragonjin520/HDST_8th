@@ -1,0 +1,20 @@
+
+
+# Large raw and sample datasets
+data/raw/
+data/sample/
+
+# Compressed dataset files
+*.gz
+*.zip
+
+# Large review data files
+*.jsonl
+*.csv
+
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
