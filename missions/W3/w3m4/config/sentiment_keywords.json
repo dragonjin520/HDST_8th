@@ -1,0 +1,36 @@
+{
+  "positive": [
+    "good",
+    "great",
+    "love",
+    "happy",
+    "excellent",
+    "awesome",
+    "amazing",
+    "best",
+    "nice",
+    "wonderful",
+    "enjoy",
+    "beautiful",
+    "fantastic",
+    "perfect",
+    "success"
+  ],
+  "negative": [
+    "bad",
+    "hate",
+    "sad",
+    "terrible",
+    "awful",
+    "worst",
+    "angry",
+    "poor",
+    "horrible",
+    "disappointed",
+    "ugly",
+    "fail",
+    "failure",
+    "annoying",
+    "problem"
+  ]
+}
