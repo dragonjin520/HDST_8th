@@ -443,38 +443,165 @@ movieId    averageRating
 
 ---
 
+
 ## 8. 제출 파일
 
 ```text
 w3m5/
 ├── README.md
+├── .gitignore
 ├── config.env
-├── src/
-│   ├── mapper.py
-│   └── reducer.py
-└── output/
-    ├── local_average_ratings.txt
-    └── hdfs_average_ratings.txt
+└── src/
+    ├── mapper.py
+    └── reducer.py
 ```
 
-MovieLens 원본 데이터는 용량이 크므로 Git 저장소에 포함하지 않고 `.gitignore`에 등록한다.
+MovieLens 원본 데이터와 실행 결과는 용량이 크거나 재생성 가능한 파일이므로 Git 저장소에 포함하지 않는다.
 
 ```gitignore
+# MovieLens 원본 데이터
 data/ml-20m/
 data/ml-20m.zip
+
+# 실행 결과
+output/local_average_ratings.txt
+output/hdfs_average_ratings.txt
+output/*_sorted.txt
 ```
 
 ---
 
 ## 9. 완료 기준
 
-- [ ] MovieLens 20M 데이터셋을 다운로드했다.
-- [ ] `ratings.csv`의 컬럼 구조를 확인했다.
-- [ ] Mapper를 구현했다.
-- [ ] Reducer를 구현했다.
-- [ ] 로컬 테스트를 통과했다.
-- [ ] 입력 데이터를 HDFS에 업로드했다.
-- [ ] Hadoop Streaming 작업을 성공적으로 실행했다.
-- [ ] HDFS 결과를 조회했다.
-- [ ] 로컬 결과와 Hadoop 결과를 비교했다.
-- [ ] 최종 실행 결과를 README에 기록했다.
+- [x] MovieLens 20M 데이터셋을 다운로드했다.
+- [x] `ratings.csv`의 컬럼 구조를 확인했다.
+- [x] Mapper를 구현했다.
+- [x] Reducer를 구현했다.
+- [x] 로컬 테스트를 통과했다.
+- [x] 입력 데이터를 HDFS에 업로드했다.
+- [x] Hadoop Streaming 작업을 성공적으로 실행했다.
+- [x] HDFS 결과를 조회했다.
+- [x] 로컬 결과와 Hadoop 결과를 비교했다.
+- [x] 최종 실행 결과를 README에 기록했다.
+
+---
+
+## 10. 실행 결과
+
+### 10.1 로컬 실행 결과
+
+MovieLens 20M의 전체 `ratings.csv`를 대상으로 Mapper와 Reducer를 실행했다.
+
+```bash
+python3 src/mapper.py \
+  < data/ml-20m/ratings.csv \
+  | sort -k1,1n \
+  | python3 src/reducer.py \
+  > output/local_average_ratings.txt
+```
+
+결과의 앞부분은 다음과 같다.
+
+```text
+1       3.921240
+2       3.211977
+3       3.151040
+4       2.861393
+5       3.064592
+6       3.834930
+7       3.366484
+8       3.142049
+9       3.004924
+10      3.430029
+```
+
+로컬 환경에서는 `sort -k1,1n` 명령어가 Hadoop의 Shuffle/Sort 단계처럼 같은 `movieId`의 데이터를 연속된 상태로 Reducer에 전달한다.
+
+---
+
+### 10.2 HDFS 입력 데이터
+
+`ratings.csv`를 Hadoop master 컨테이너로 복사한 뒤 HDFS의 `/w3m5/input` 경로에 업로드했다.
+
+```bash
+docker exec hadoop-master \
+  hdfs dfs -put -f /tmp/ratings.csv /w3m5/input/
+```
+
+업로드 결과는 다음과 같다.
+
+```text
+Found 1 items
+-rw-r--r--   2 root supergroup    508.7 M 2026-07-14 06:32 /w3m5/input/ratings.csv
+```
+
+입력 파일은 약 508.7MB이며 복제 계수는 2로 저장됐다.
+
+---
+
+### 10.3 Hadoop Streaming 실행 결과
+
+Python으로 작성한 Mapper와 Reducer를 Hadoop Streaming 작업으로 실행했다.
+
+```bash
+docker exec hadoop-master \
+  hadoop jar /opt/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar \
+  -files /tmp/mapper.py,/tmp/reducer.py \
+  -mapper "python3 mapper.py" \
+  -reducer "python3 reducer.py" \
+  -input /w3m5/input/ratings.csv \
+  -output /w3m5/output
+```
+
+HDFS 출력 결과의 앞부분은 다음과 같다.
+
+```text
+1       3.921240
+10      3.430029
+100     3.221385
+1000    3.105911
+100003  3.666667
+100006  2.500000
+100008  3.416667
+100010  2.795455
+100013  3.200000
+100015  2.000000
+```
+
+Hadoop의 Shuffle/Sort 단계에서는 Mapper의 Key가 문자열 기준으로 정렬되므로 `1`, `10`, `100`, `1000` 순서로 출력됐다. 이는 평균 계산 오류가 아니라 Key 정렬 방식의 차이다.
+
+---
+
+### 10.4 결과 검증
+
+HDFS 결과를 로컬 파일로 저장한 뒤, 로컬 결과와 Hadoop 결과를 모두 영화 ID의 숫자 기준으로 정렬했다.
+
+```bash
+sort -k1,1n output/local_average_ratings.txt \
+  > output/local_average_ratings_sorted.txt
+
+sort -k1,1n output/hdfs_average_ratings.txt \
+  > output/hdfs_average_ratings_sorted.txt
+```
+
+정렬된 두 결과를 `diff`로 비교했다.
+
+```bash
+diff \
+  output/local_average_ratings_sorted.txt \
+  output/hdfs_average_ratings_sorted.txt
+```
+
+`diff` 실행 결과 아무 내용도 출력되지 않았다. 따라서 로컬 실행 결과와 Hadoop Streaming 실행 결과가 동일한 것을 확인했다.
+
+---
+
+## 11. 최종 정리
+
+이번 과제에서는 MovieLens 20M 데이터셋의 영화별 평균 평점을 계산하는 MapReduce 작업을 구현했다.
+
+Mapper는 `ratings.csv`의 각 행에서 `movieId`와 `rating`을 추출해 Key-Value 형태로 출력했다. Hadoop의 Shuffle/Sort 단계는 동일한 `movieId`를 가진 평점들을 하나의 그룹으로 모았고, Reducer는 평점의 합계와 개수를 이용해 각 영화의 평균 평점을 계산했다.
+
+로컬 환경에서는 Unix `sort` 명령어로 Shuffle/Sort 과정을 재현했고, Hadoop 환경에서는 HDFS에 저장한 약 508.7MB의 전체 데이터를 Hadoop Streaming으로 처리했다. 마지막으로 로컬 결과와 Hadoop 결과를 숫자 기준으로 정렬해 비교했으며 두 결과가 동일함을 확인했다.
+
+이를 통해 Python Mapper/Reducer 코드가 로컬 환경과 Hadoop 분산 처리 환경에서 동일하게 동작한다는 것을 검증했다.

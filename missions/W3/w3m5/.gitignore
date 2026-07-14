@@ -6,9 +6,10 @@ output/*_sorted.txt
 data/ml-20m/
 data/ml-20m.zip
 
-# 실행 임시 결과
-output/local_average_ratings.txt
 
+output/local_average_ratings.txt
+output/hdfs_average_ratings.txt
+output/*_sorted.txt
 # Python 캐시
 __pycache__/
 *.py[cod]
