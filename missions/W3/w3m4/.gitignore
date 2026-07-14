@@ -1,0 +1,7 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Large raw datasets
+data/*.csv
+!data/README.md
