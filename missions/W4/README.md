@@ -1,3 +1,46 @@
+# W4M1 과제 핵심
+
+1. Spark Master 1개와 Worker 2개가 정상적으로 연결되는가
+2. spark-submit으로 Job을 Master에 제출할 수 있는가
+3. Master가 작업을 Worker들에게 분배하는가
+4. 결과와 로그를 통해 Job 성공 여부를 확인할 수 있는가
+
+
+## 과제 흐름
+Dockerfile 작성
+    ↓
+Spark 실행 환경 이미지 생성
+    ↓
+docker-compose.yml 작성
+    ↓
+Master 1개 + Worker 2개 실행
+    ↓
+Spark Web UI에서 Worker 연결 확인
+    ↓
+Spark Job 준비
+    ↓
+submit-job.sh 실행
+    ↓
+spark-submit이 Master에 Job 제출
+    ↓
+Master가 Worker에 Task 분배
+    ↓
+Worker가 병렬로 계산
+    ↓
+결과 및 로그 확인
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 학습 목표
 The objective of this project is to build an Apache Spark standalone cluster using Docker, run a Spark job, and validate the results
 
