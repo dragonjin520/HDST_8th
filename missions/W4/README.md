@@ -30,11 +30,22 @@ Worker가 병렬로 계산
 결과 및 로그 확인
 
 
+## 주의사항
+1. Spark 버전을 하나로 명시
+2. Master와 Worker가 같은 Docker 이미지를 사용
+3. Python과 Java 버전도 이미지 안에서 통일
+4. 로컬에 설치된 Spark나 PySpark에 의존하지 않음
+5. latest 태그 사용을 피함
+6. ARM64와 AMD64에서 사용할 수 있는 이미지 확인
+7. README에 버전과 실행 방법 기록
 
 
-
-
-
+### 주요 설정
+* Spark       -  3.5.x
+* Hadoop 빌드  - Hadoop 3
+* Java        -  17
+* Python      - 3
+* Cluster     - Spark Standalone
 
 
 
