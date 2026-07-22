@@ -1,9 +1,24 @@
-# W4M1 과제 핵심
+# 과제 목표
+- Spark Master 1개
+- Spark Worker 2개
+- Worker당 CPU Core 2개
+- Worker당 Memory 1GB
+- Spark Job: Monte Carlo 방식의 π 추정
+
+# 과제 핵심
 
 1. Spark Master 1개와 Worker 2개가 정상적으로 연결되는가
 2. spark-submit으로 Job을 Master에 제출할 수 있는가
 3. Master가 작업을 Worker들에게 분배하는가
 4. 결과와 로그를 통해 Job 성공 여부를 확인할 수 있는가
+
+## 요구 사항
+- Master와 Worker의 연결
+- Driver와 Executor의 역할
+- Partition과 Task의 분산 처리
+- Worker별 자원 제한
+- Docker를 통한 실행 환경 재현
+- 쉘 스크립트를 통한 Job 제출 자동화
 
 
 ## 과제 흐름
@@ -40,7 +55,7 @@ Worker가 병렬로 계산
 7. README에 버전과 실행 방법 기록
 
 
-### 주요 설정
+## 주요 설정
 * Spark       -  3.5.x
 * Hadoop 빌드  - Hadoop 3
 * Java        -  17
@@ -48,7 +63,72 @@ Worker가 병렬로 계산
 * Cluster     - Spark Standalone
 
 
+## 구조
 
+PiEstimation Application
+├── Worker 1
+│   └── Executor 1
+│       ├── Core 1
+│       └── Core 2
+└── Worker 2
+    └── Executor 0
+        ├── Core 1
+        └── Core 2
+
+한 worker 당 코어 2개로 제한 -> 코어가 제대로 일을 할당 받기 위해서
+pi.py 에서 파티션 8개 만들었으니까 총 4개의 코어가 두번에 나눠서 task 처리
+
+
+
+
+## 추가 사항
+
+- Hadoop MapReduce와 Spark 비교
+
+### Hadoop
+Hadoop MapReduce에서는 Mapper와 Reducer가 각각 실행된 후 종료된다.
+
+### Spark
+Driver가 전체 연산 흐름을 관리하고, 여러 연산 단계를 하나의 Application 안에서 실행한다.
+
+Driver
+├── 연산 흐름 관리
+├── Partition 구성
+├── Task 생성
+├── Executor 상태 확인
+└── 결과 집계
+
+Spark는 여러 단계의 연산을 연속적으로 수행하므로, 중간에 장애가 발생했을 때 처음부터 모든 작업을 다시 수행하는 대신 RDD의 lineage를 이용해 필요한 Partition을 다시 계산할 수 있다.
+
+## 배운점
+이번 과제를 통해 Docker 컨테이너를 여러 개 실행하는 것만으로 분산 처리가 이루어지는 것은 아니라는 점을 확인했다.
+
+Driver
+→ 실행 계획과 Task 관리
+
+Master
+→ Worker 자원 할당
+
+Worker
+→ Executor 실행 환경 제공
+
+Executor
+→ 실제 Task 처리
+
+Core
+→ 동시에 실행 가능한 Task 수 결정
+
+Partition
+→ 데이터 분할 및 병렬 처리 단위
+
+
+
+
+
+### 반대 상황
+반대로 Spark를 쓰지 않고 컨테이너 두 개만 띄운다면:
+두 컨테이너가 존재할 뿐, pi.py 작업을 자동으로 반씩 나누지는 않는다. 
+직접 코드를 작성해서 데이터 범위를 나누고 결과를 합쳐야 한다.
 
 
 
