@@ -1,4 +1,4 @@
-from W4M2.src.spark_session import create_spark_session
+from w4m2_personal.src.spark_session import create_spark_session
 
 
 def main() -> None:
