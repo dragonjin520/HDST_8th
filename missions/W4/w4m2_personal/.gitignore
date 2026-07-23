@@ -3,7 +3,6 @@ missions/W4/w4m2_personal/data/processed/
 missions/W4/w4m2_personal/data/raw/
 
 # Spark output
-missions/W4/w4m2_personal/output/
 
 # Python cache
 __pycache__/
