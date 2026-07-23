@@ -78,5 +78,3 @@ To improve safety, accountability, and policymaking, the TLC now requires all FH
 - 이동식 호텔 : 
     - 수면 포드 자동차 운영
 - 이동 광고
-
-- 
