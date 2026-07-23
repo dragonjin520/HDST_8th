@@ -4,13 +4,4 @@
 ## Lectures
 ```text
 Lectures/
-├── W1
-├── W2
 ```
-
-
-
-## Missions
-
-- [W1](./missions/W1)
-- [W2](./missions/W2)
