@@ -2,11 +2,13 @@ from pyspark.sql import SparkSession
 
 
 def create_spark_session() -> SparkSession:
+    """W4M2 분석용 SparkSession을 생성한다."""
+
     return (
         SparkSession.builder
-        .appName("W4M2-Spark-Test")
-        .master("local[*]")
-        .config("spark.driver.host", "127.0.0.1")
-        .config("spark.driver.bindAddress", "127.0.0.1")
+        .appName("W4M2-NYC-Taxi-Analysis")
+        .config("spark.sql.session.timeZone", "America/New_York")
+        .config("spark.sql.shuffle.partitions", "8")
+        .config("spark.sql.adaptive.enabled", "true")
         .getOrCreate()
     )
