@@ -233,7 +233,6 @@ def main():
         print("=" * 50)
 
     finally:
-        input("Spark UI 확인 후 Enter를 누르세요...")
         spark.stop()
 
 
