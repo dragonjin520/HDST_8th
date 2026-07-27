@@ -1,0 +1,8 @@
+# W5 원본 데이터
+missions/W5/data/raw/
+
+# W5 실행 결과
+missions/W5/output/
+
+
+missions/W5/data/raw/yellow_tripdata_2026-02.parquet

@@ -1,0 +1,10 @@
+{
+  "app_name": "NYC Taxi RDD Analysis",
+  "input_path": "data/raw/yellow_tripdata_2026-02.parquet",
+  "input_format": "parquet",
+  "summary_output_path": "output/summary",
+  "daily_output_path": "output/daily_metrics",
+  "output_format": "csv",
+  "min_fare_amount": 0,
+  "min_trip_distance": 0
+}
