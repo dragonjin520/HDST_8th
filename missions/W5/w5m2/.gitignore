@@ -1,0 +1,22 @@
+# Raw data
+data/raw/*
+
+# Spark output
+output/*
+
+# Keep directories
+!data/raw/.gitkeep
+!output/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+
+# macOS
+.DS_Store
