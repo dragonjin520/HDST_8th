@@ -430,28 +430,105 @@ spark-submit \
 
 ---
 
-## 14. 예상 출력
+## 14. 실행 결과
 
-콘솔에는 다음과 같은 전체 분석 결과가 출력된다.
+### 14.1 전체 분석 결과
 
 ```text
 ==================================================
 NYC Taxi RDD Analysis
 ==================================================
-Input format          : parquet
-Valid trip count      : 3,224,879
-Total revenue         : 계산 결과
-Average trip distance : 약 3.45 miles
+Input path        : data/raw/yellow_tripdata_2026-02.parquet
+Input format      : parquet
+Partition count   : 11
+Raw row count     : 3,399,866
+Valid trip count  : 3,250,043
+Invalid trip count: 149,823
+Total revenue     : $70,698,931.39
+Average distance  : 6.50 miles
 ==================================================
 ```
 
-W4 과제에서는 동일한 데이터의 정제 후 유효 운행 수가 `3,224,879건`, 평균 이동 거리가 약 `3.45마일`로 확인되었다.
+전체 원본 데이터 `3,399,866건` 중 정제 조건을 통과한 데이터는 `3,250,043건`이었다.
 
-다만 W5 과제에서는 정제 조건과 RDD 구현 결과를 다시 실행하여 최종 값을 검증한다.
+제외된 데이터는 `149,823건`이며, 다음 조건에 해당하는 데이터가 제거되었다.
+
+- `pickup_datetime`이 Null인 데이터
+- `fare_amount`가 Null이거나 0 이하인 데이터
+- `trip_distance`가 Null이거나 0 이하인 데이터
+- 데이터 타입 변환에 실패한 데이터
+
+전체 유효 운행의 기본 운임 합계는 `$70,698,931.39`이며, 평균 이동 거리는 `6.50마일`로 계산되었다.
+
+평균 이동 거리가 W4 분석 결과보다 크게 나타난 이유는 이번 과제에서 이동 거리 상한값과 운행 시간 조건을 적용하지 않고, 0 이하의 값만 제거했기 때문이다.
+
+### 14.2 결과 파일
+
+전체 요약 결과는 다음 경로에 저장했다.
+
+```text
+output/summary/
+```
+
+일자별 운행 건수와 매출 결과는 다음 경로에 저장했다.
+
+```text
+output/daily_metrics/
+```
+
+Spark의 `saveAsTextFile()`을 사용했기 때문에 각 출력 디렉터리에는 `_SUCCESS` 파일과 `part-*` 결과 파일이 생성된다.
 
 ---
 
-## 15. 과제 진행 순서
+## 15. Spark UI 및 DAG 분석
+![Spark job](screenshots/spark_jobs.png)
+
+
+Spark UI에서 전체 작업 결과를 확인한 결과 총 `11개`의 Job이 실행되었다.
+
+주요 Action은 다음과 같다.
+
+- `count()`
+- `reduce()`
+- `take()`
+- `saveAsTextFile()`
+
+RDD의 Transformation은 즉시 실행되지 않고, 위 Action이 호출될 때 실제 Job이 생성되었다.
+
+### 15.1 Stage 및 Shuffle
+
+`reduceByKey()`가 수행된 Stage에서는 다음 결과가 확인되었다.
+
+```text
+Tasks         : 11/11
+Input         : 27.2 MiB
+Shuffle Write : 3.6 KiB
+```
+
+이는 11개 파티션에 분산된 데이터를 날짜 Key를 기준으로 다시 모으는 과정에서 Shuffle이 발생했다는 의미이다.
+
+`sortByKey()` Job은 총 2개의 Stage와 22개의 Task로 구성되었다.
+
+```text
+Stage 1
+각 파티션에서 날짜별 데이터 처리
+        ↓ Shuffle
+Stage 2
+날짜 기준으로 정렬
+```
+
+### 15.2 Skipped Stage
+
+Spark UI에는 `6개`의 Skipped Stage가 표시되었다.
+
+이는 오류가 아니라, 앞서 계산된 캐시 또는 Shuffle 결과를 재사용하여 동일한 Stage를 다시 계산하지 않았다는 의미이다.
+
+### 15.3 DAG 이미지
+
+![Spark DAG](screenshots/spark_dag.png)
+---
+
+## 16. 과제 진행 순서
 
 ```text
 1. 프로젝트 디렉터리 생성
@@ -471,21 +548,10 @@ W4 과제에서는 동일한 데이터의 정제 후 유효 운행 수가 `3,224
 
 ---
 
-## 16. 이번 과제의 핵심
+## 17. 결론
 
-이번 과제는 단순히 택시 데이터의 통계를 구하는 것이 목적이 아니다.
+이번 과제를 통해 단순한 통계 계산을 넘어 Spark RDD의 실행 구조를 직접 확인했다.
 
-RDD의 Transformation을 연결했을 때 Spark가 이를 즉시 실행하지 않고 Lineage로 관리하는 과정, Action 호출 시 DAG가 생성되는 과정, Shuffle을 기준으로 Stage가 분리되는 과정을 직접 확인하는 것이 핵심이다.
+RDD의 Transformation은 즉시 실행되지 않고 Lineage로 누적되며, `count`, `reduce`, `take`, `saveAsTextFile`과 같은 Action이 호출될 때 Spark가 DAG를 생성한다. 이후 Shuffle 경계를 기준으로 Stage가 분리되고 각 Stage의 Task가 파티션 단위로 병렬 실행되는 과정을 Spark UI에서 확인했다.
 
-최종적으로 다음 흐름을 이해하는 것을 목표로 한다.
-
-```text
-RDD 생성
-→ Transformation 누적
-→ Lazy Evaluation
-→ Action 호출
-→ DAG 생성
-→ Stage 분리
-→ Task 병렬 실행
-→ 결과 저장
-```
+특히 `reduceByKey`와 `sortByKey` 과정에서 Shuffle이 발생했고, 캐시 및 기존 Shuffle 결과가 재사용되면서 일부 Stage가 Skipped 되는 것도 확인했다.
