@@ -56,12 +56,14 @@ w5m2/
 │   └── raw/
 │       └── yellow_tripdata_2026-02.parquet
 ├── output/
-│   ├── cleaned_trips/
 │   ├── hourly_summary/
 │   ├── daily_summary/
 │   └── quality_summary/
 ├── screenshots/
-│   └── spark_ui/
+│   ├── jobs.png
+│   ├── stages.png
+│   ├── sql_plan.png
+│   └── dag.png
 └── src/
     ├── main.py
     ├── extract.py
@@ -80,8 +82,8 @@ w5m2/
 ### Data
 
 - 원본 Parquet 데이터
-- 정제된 운행 데이터
-- 시간대별·일자별 집계 결과
+- 시간대별 집계 결과
+- 일자별 집계 결과
 - 데이터 품질 요약
 
 ### Code
@@ -112,19 +114,17 @@ Parquet 입력
     ↓
 필수 컬럼 선택
     ↓
-분석 기간 필터
-    ↓
-운행 시간·일자·시간대 파생 컬럼 생성
+분석 기간 여부·운행 시간·일자·시간대 파생 컬럼 생성
     ↓
 검증 사유 컬럼 생성
     ↓
-유효 데이터와 무효 데이터 분리
+validated_df persist
     ↓
-persist 적용
+유효 데이터 필터
     ↓
-시간대별·일자별 집계
+시간대별·일자별·품질별 집계
     ↓
-품질 요약 및 결과 저장
+세 집계 결과만 Parquet 저장
 ```
 
 ### 5.1 Extract
@@ -210,12 +210,11 @@ negative_total_amount
 
 결과를 Parquet 형식으로 저장했다.
 
-- `output/cleaned_trips/`: 정제된 유효 운행 데이터
 - `output/hourly_summary/`: 시간대별 집계
 - `output/daily_summary/`: 일자별 집계
-- `output/quality_summary/`: 무효 사유별 건수
+- `output/quality_summary/`: `valid`, `out_of_period`, 무효 사유별 건수
 
-정제 데이터는 원본 파티션 구조를 유지하고, 크기가 작은 집계 결과만 `coalesce(1)`을 적용했다.
+초기 구현에서는 정제된 전체 데이터도 저장했지만, 과제 요구사항에 필수적이지 않고 별도의 `write` Action과 Stage를 생성하므로 최종 구현에서는 제거했다. 최종 출력은 모두 수십 행 규모의 소규모 집계 결과이므로 `coalesce(1)`을 적용했다.
 
 ## 6. 실행 방법
 
@@ -317,30 +316,17 @@ Raw row count
 
 ## 8. Lazy Evaluation 검증
 
-DataFrame 로딩과 Transformation 정의 직후 다음 메시지를 출력했다.
-
-```text
-Transformations have been defined.
-No Action has been executed yet.
-```
-
-이 시점에는 `select`, `filter`, `withColumn`, `groupBy` 등의 연산이 실행되지 않고 논리 실행 계획에만 기록된다.
-
-이후 다음 Action을 호출하면서 실제 Job이 생성됐다.
+`select`, `withColumn`, `filter`, `groupBy`, `agg`, `persist`를 선언하는 시점에는 실제 Job이 실행되지 않는다. 최종 구현에서는 다음 세 개의 `write` Action이 호출될 때 Transformation이 실제로 실행된다.
 
 ```python
-raw_df.count()
-period_filtered_df.count()
-valid_df.count()
-invalid_df.count()
-invalid_reason_df.show()
-hourly_summary_df.show()
-daily_summary_df.show()
-valid_df.show()
-df.write.save()
+save_dataframe(hourly_summary_df, ...)
+save_dataframe(daily_summary_df, ...)
+save_dataframe(quality_summary_df, ...)
 ```
 
-Spark UI의 SQL / DataFrame 화면에서는 `count`, `showString`, `save` 실행을 확인할 수 있었다. 하나의 Action이 내부 처리 과정에 따라 여러 Job으로 나뉠 수도 있으므로 Action과 Job은 항상 일대일 대응하지 않는다.
+첫 번째 `write` Action에서 원본 Parquet 스캔, 파생 컬럼 생성, 검증 사유 생성, `validated_df` 캐시 물질화가 실행된다. 이후 일자별·품질별 집계는 `InMemoryTableScan`을 통해 캐시된 결과를 재사용한다.
+
+Spark UI의 SQL / DataFrame 화면에서도 최종 실행은 세 개의 `save` 실행으로 확인됐다. 하나의 `write` Action은 집계, Shuffle, 정렬, 파일 저장을 포함하므로 여러 Job과 Stage를 만들 수 있다.
 
 ## 9. DAG 및 Stage 분석
 
@@ -349,19 +335,27 @@ Spark UI의 SQL / DataFrame 화면에서는 `count`, `showString`, `save` 실행
 ```text
 Scan Parquet
     ↓
-Project
+Project — 분석 기간·운행 시간·일자·시간대 생성
     ↓
-Filter
+Project — validation_reason 생성
     ↓
-WithColumn
+InMemoryRelation / InMemoryTableScan
     ↓
-InMemoryTableScan
+Filter / Project
     ↓
-Exchange
+Partial HashAggregate
     ↓
-HashAggregate
+Exchange — groupBy Shuffle
     ↓
-Sort / Write
+Final HashAggregate
+    ↓
+Exchange — 정렬 Shuffle
+    ↓
+Sort
+    ↓
+Coalesce(1)
+    ↓
+WriteFiles
 ```
 
 ### 9.1 Narrow Transformation
@@ -400,114 +394,189 @@ Spark UI의 Stage 화면에서 Shuffle Read와 Shuffle Write가 확인되었고,
 
 집계 후 결과 크기가 작아지거나 `coalesce(1)`이 적용된 구간에서는 1개의 Task만 실행된 Stage도 확인할 수 있었다.
 
-### 9.4 Completed Job과 Skipped Stage
+### 9.4 Completed Stage 최적화 결과
 
-Spark UI에서 다음 결과를 확인했다.
+초기 구현에서는 데이터 확인을 위한 `count()`와 `show()`, 정제 데이터 전체 저장, 별도 품질 집계, 전역 정렬로 인해 32개의 Completed Stage가 발생했다.
+
+최적화 과정은 다음과 같다.
+
+| 단계 | Completed Stages | 주요 변경 |
+|---|---:|---|
+| 초기 구현 | 32 | 반복 `count()`, `show()`, 정제 데이터 저장 포함 |
+| 중복 Action 제거 | 16 | 확인용 `show()` 제거, `count()` 통합 |
+| Count 및 품질 처리 통합 | 15 | 두 번의 `first()`를 하나의 품질 흐름으로 축소 |
+| 최종 구현 | 12 | 콘솔용 Action과 정제 데이터 저장 제거 |
+
+초기 32개에서 최종 12개로 줄어 Completed Stage를 62.5% 감소시켰다.
 
 ```text
-Completed Jobs   : 32
-Completed Stages : 32
-Skipped Stages   : 19
+감소율 = (32 - 12) / 32 = 62.5%
 ```
 
-Job 수가 많은 이유는 결과 확인과 저장 과정에서 `count`, `show`, `write` Action을 여러 번 실행했기 때문이다.
+최종 실행에는 시간대별, 일자별, 품질별 세 개의 `write` Action만 남겼다. 각 결과는 서로 다른 키로 집계되므로 각각의 `groupBy` Shuffle과 결과 저장 Stage는 필요하다.
 
-Skipped Stage와 Skipped Task는 실패가 아니라, 이미 계산된 결과를 Spark가 재사용했다는 의미다.
+Spark UI에는 9개의 Skipped Stage도 표시됐다. 이는 실패한 Stage가 아니라 AQE가 실행 중 Shuffle 통계를 확인한 뒤 초기 물리 계획 일부를 대체하면서 실제 Task를 실행하지 않은 기록이다. 모두 `0/11` 또는 `0/1` Task로 표시됐으므로 실제 실행 비용은 Completed Stage 12개를 기준으로 평가했다.
 
 ## 10. `persist()` 최적화
 
-유효 데이터와 무효 데이터는 이후 여러 Action과 집계에서 반복 사용되므로 다음과 같이 저장했다.
+시간대별, 일자별, 품질별 집계가 동일한 정제·검증 결과를 반복 사용하므로 공통 중간 DataFrame인 `validated_df`를 캐시했다.
 
 ```python
-valid_df = valid_df.persist(StorageLevel.MEMORY_AND_DISK)
-invalid_df = invalid_df.persist(StorageLevel.MEMORY_AND_DISK)
+validated_df = validated_df.persist(
+    StorageLevel.MEMORY_AND_DISK
+)
 ```
 
-Spark UI의 DAG에서는 `InMemoryTableScan`이 확인됐다. 이는 후속 연산이 원본 Parquet부터 정제 과정을 반복 실행하지 않고 캐시된 데이터를 읽었다는 의미다.
+첫 번째 `write` Action에서 캐시가 물질화되고, 후속 집계에서는 Spark UI의 `InMemoryTableScan`을 통해 캐시된 결과를 읽는다. 이를 통해 원본 Parquet 스캔과 파생 컬럼·검증 사유 계산을 매 집계마다 반복하지 않도록 했다.
 
-또한 일부 Stage와 Task가 skipped 상태로 표시되어 이전 계산 결과가 재사용됐음을 확인했다.
+초기 구현에서는 `valid_df`와 `invalid_df`를 각각 persist했지만, 무효 데이터는 품질 집계에서 한 번만 사용하므로 캐시 비용이 더 클 수 있었다. 최종 구현에서는 세 결과가 공통으로 참조하는 `validated_df` 하나만 persist하도록 단순화했다.
 
-모든 연산이 끝난 뒤에는 다음과 같이 캐시를 해제했다.
+모든 저장이 끝난 뒤에는 캐시를 해제한다.
 
 ```python
-valid_df.unpersist()
-invalid_df.unpersist()
+validated_df.unpersist()
 ```
 
 ## 11. 실행 계획 확인
 
-시간대별·일자별 집계 DataFrame에 대해 다음 명령을 실행했다.
+Spark UI의 Final Physical Plan에서 다음 연산을 확인했다.
 
-```python
-hourly_summary_df.explain(mode="formatted")
-daily_summary_df.explain(mode="formatted")
+- `Scan parquet`: 필요한 6개 컬럼만 원본 Parquet에서 읽음
+- `Project`: 분석 기간 여부, 운행 시간, 승차 일자, 승차 시간대 생성
+- `Project`: `validation_reason` 생성
+- `InMemoryRelation`: `validated_df` 캐시 저장
+- `InMemoryTableScan`: 후속 집계에서 캐시 재사용
+- `Filter`: 분석 기간 내부의 유효 데이터만 선택
+- `HashAggregate`: 파티션별 부분 집계와 최종 집계
+- `Exchange hashpartitioning`: 시간대·일자·품질 그룹 기준 Shuffle
+- `AQEShuffleRead`: AQE가 작은 Shuffle 파티션을 병합해 읽음
+- `Exchange rangepartitioning`: 시간대·일자 순서 정렬을 위한 Shuffle
+- `Sort`: 시간대와 일자 오름차순 정렬
+- `Coalesce(1)`: 소규모 집계 결과를 하나의 출력 파티션으로 축소
+- `WriteFiles`: Parquet 결과 저장
+
+### 11.1 시간대별 집계 계획
+
+```text
+InMemoryTableScan
+→ Filter
+→ Project
+→ Partial HashAggregate(pickup_hour)
+→ Exchange hashpartitioning
+→ Final HashAggregate
+→ Exchange rangepartitioning
+→ Sort
+→ Coalesce(1)
+→ WriteFiles
 ```
 
-실행 계획에서 확인할 주요 연산은 다음과 같다.
+시간대별 결과는 최종 24행이며, 첫 번째 Shuffle 전 파티션 내부 부분 집계를 수행해 약 100.9MiB 입력을 약 7.5KiB의 중간 결과로 줄인 뒤 이동시켰다.
 
-- `Scan parquet`: 원본 Parquet 읽기
-- `Filter`: 분석 기간과 유효 데이터 조건 적용
-- `Project`: 컬럼 선택 및 파생 컬럼 계산
-- `InMemoryTableScan`: persist된 DataFrame 재사용
-- `HashAggregate`: 시간대별·일자별 집계
-- `Exchange`: groupBy 및 정렬 과정의 Shuffle
-- `Sort`: 시간대와 일자 순서 정렬
+### 11.2 일자별 집계 계획
+
+```text
+InMemoryTableScan
+→ Filter
+→ Project
+→ Partial HashAggregate(pickup_date)
+→ Exchange hashpartitioning
+→ Final HashAggregate
+→ Exchange rangepartitioning
+→ Sort
+→ Coalesce(1)
+→ WriteFiles
+```
+
+일자별 결과는 2026년 2월 1일부터 28일까지 최종 28행이다. AQE는 첫 번째 Shuffle 결과 59행, 두 번째 Shuffle 결과 28행을 확인하고 파티션을 병합했다.
+
+### 11.3 품질별 집계 계획
+
+```text
+InMemoryTableScan
+→ Project(quality_group)
+→ Partial HashAggregate
+→ Exchange hashpartitioning
+→ AQEShuffleRead
+→ Final HashAggregate
+→ Coalesce(1)
+→ WriteFiles
+```
+
+품질 결과는 `valid`, `out_of_period`, 각 무효 사유별 건수만 포함하므로 별도의 전역 정렬 없이 한 번의 집계 Shuffle과 저장으로 처리됐다.
 
 ## 12. Spark UI 캡처
 
 ### 12.1 Completed Jobs
 
-![Completed Jobs](screenshots/jobs.png)
-
-여러 Action 실행으로 총 32개의 Job이 생성된 것을 확인했다.
+최종 구현에서는 시간대별·일자별·품질별 세 개의 `save` Action만 실행했다.
 
 ### 12.2 Completed Stages
 
-![Completed Stages](screenshots/stages.png)
-
-11개의 입력 파티션에 대응하는 Task와 Shuffle Read·Write를 확인했다.
+초기 32개에서 최종 12개로 줄어든 Completed Stage와, 입력 파티션 11개에 대응하는 Task 및 Shuffle Read·Write를 확인했다.
 
 ### 12.3 SQL / DataFrame
 
-![SQL DataFrame](screenshots/sql_plan.png)
-
-`count`, `showString`, `save` Action과 각 Action에서 생성된 Job을 확인했다.
+최종 실행의 세 개 `save` Action과 각 Action에서 생성된 Job 및 AdaptiveSparkPlan을 확인했다.
 
 ### 12.4 DAG Visualization
 
-![DAG Visualization](screenshots/dag.png)
-
-DAG에서 `Scan parquet`, `WholeStageCodegen`, `InMemoryTableScan`, `Exchange`를 확인했다.
+DAG에서 `Scan parquet`, `Project`, `InMemoryTableScan`, `HashAggregate`, `Exchange`, `AQEShuffleRead`, `Sort`, `WriteFiles`를 확인했다.
 
 ## 13. 최적화 전략
 
 ### 13.1 필요한 컬럼만 조기에 선택
 
-원본 20개 컬럼 중 분석과 품질 검증에 필요한 컬럼만 먼저 선택해 이후 처리량을 줄였다.
+원본 20개 컬럼 중 분석과 품질 검증에 필요한 6개 컬럼만 읽도록 구성했다. Physical Plan의 `ReadSchema`에서도 해당 6개 컬럼만 확인됐다.
 
-### 13.2 분석 기간 및 품질 필터를 집계보다 먼저 적용
+### 13.2 공통 전처리 결과 한 번만 계산
 
-집계 전에 기간 밖 데이터와 무효 데이터를 제거해 Shuffle 대상 데이터의 양을 줄였다.
+분석 기간 여부, 운행 시간, 승차 일자·시간대, 검증 사유를 포함한 `validated_df`를 한 번 계산해 persist했다. 시간대별·일자별·품질별 집계는 모두 이 캐시를 재사용한다.
 
-### 13.3 반복 사용하는 DataFrame persist
+### 13.3 부분 집계 후 Shuffle
 
-유효·무효 DataFrame을 `MEMORY_AND_DISK`에 저장해 반복 Action에서 원본부터 다시 계산하는 비용을 줄였다.
+Spark는 각 입력 파티션에서 `partial HashAggregate`를 먼저 수행하고 작은 중간 결과만 Shuffle했다. 예를 들어 시간대별 집계는 약 100.9MiB 입력을 약 7.5KiB의 중간 결과로 축소한 뒤 전송했다.
 
-### 13.4 집계 결과만 `coalesce(1)` 적용
+### 13.4 콘솔 확인용 Action 제거
 
-정제 데이터는 병렬성을 유지하고, 24행 또는 28행 수준의 소규모 집계 결과에만 `coalesce(1)`을 적용했다.
+초기 구현의 `count()`, `show()`, `first()`는 결과 확인에는 유용하지만 각각 별도의 Job과 Stage를 생성했다. 최종 구현에서는 과제 요구사항에 없는 콘솔 출력 Action을 제거하고 세 개의 `write` Action만 남겼다.
 
-### 13.5 불필요한 Action 최소화 필요
+### 13.5 정제 데이터 전체 저장 제거
 
-이번 과제에서는 Lazy Evaluation과 Spark UI 실행 과정을 확인하기 위해 여러 `count()`와 `show()`를 호출했다. 운영 파이프라인에서는 결과 확인용 Action을 줄여 불필요한 Job 생성을 최소화해야 한다.
+정제 데이터 전체 저장은 별도의 `write` Action과 Stage를 만들지만 최종 과제 결과에는 필수적이지 않았다. 시간대별·일자별·품질별 집계 결과만 저장하도록 변경했다.
+
+### 13.6 품질 상태 통합
+
+별도의 유효 건수, 무효 건수, 기간 외 건수 Action을 실행하지 않고 `quality_group` 하나로 통합했다.
+
+```text
+valid
+out_of_period
+missing_required_value
+invalid_datetime_order
+non_positive_distance
+excessive_distance
+excessive_duration
+negative_fare
+negative_total_amount
+```
+
+### 13.7 AQE 유지
+
+AQE는 작은 Shuffle 파티션을 병합하고 초기 계획의 일부 Stage를 건너뛰었다. Skipped Stage를 없애기 위해 AQE를 끄면 초기 계획의 Task가 실제 실행될 수 있으므로 AQE를 유지했다.
+
+### 13.8 결과 정렬의 비용 확인
+
+시간대별·일자별 실행 계획에는 `Exchange rangepartitioning → Sort`가 남아 있어 각 결과마다 추가 Shuffle이 발생한다. 출력 순서가 필수가 아니라면 `orderBy`를 제거해 Completed Stage를 더 줄일 수 있다. 현재는 가독성 있는 결과 순서를 유지하기 위해 정렬을 남겼다.
 
 ## 14. 결론
 
-이번 과제를 통해 DataFrame Transformation은 즉시 실행되지 않고 논리 실행 계획에 기록되며, Action이 호출될 때 실제 Job과 Stage가 생성된다는 점을 확인했다.
+이번 과제를 통해 DataFrame Transformation은 즉시 실행되지 않고 실행 계획에 기록되며, `write` Action이 호출될 때 실제 Job과 Stage가 생성된다는 점을 확인했다.
 
-`select`, `filter`, `withColumn`은 같은 Stage에서 파이프라인 형태로 실행될 수 있었고, `groupBy`에서는 `Exchange`와 Shuffle이 발생해 Stage가 분리됐다. 원본 11개 파티션은 주요 Stage에서 11개의 Task로 병렬 처리됐다.
+초기 구현에서는 반복적인 `count()`, `show()`, 정제 데이터 전체 저장, 별도 품질 집계로 인해 32개의 Completed Stage가 발생했다. 이후 콘솔 확인용 Action 제거, 품질 상태 통합, 공통 `validated_df` persist, 정제 데이터 저장 제거를 적용해 Completed Stage를 12개로 줄였다. 이는 초기 대비 62.5% 감소한 결과다.
 
-정제된 DataFrame에 `persist()`를 적용한 결과 Spark UI에서 `InMemoryTableScan`, Skipped Stage, Skipped Task를 확인할 수 있었다. 이를 통해 반복 연산에서 원본 데이터부터 다시 계산하지 않고 캐시된 결과를 재사용한다는 점을 검증했다.
+최종 Physical Plan에서는 원본 Parquet에서 필요한 6개 컬럼만 읽고, 공통 전처리 결과를 `InMemoryRelation`에 저장한 뒤 세 집계에서 `InMemoryTableScan`으로 재사용했다. 각 집계는 파티션 내부의 부분 `HashAggregate` 후 작은 중간 결과만 Shuffle했으며, AQE는 실행 시점의 통계를 바탕으로 Shuffle 파티션을 병합했다.
 
-W5M1에서는 RDD의 Lineage와 복구 원리를 중심으로 Spark의 저수준 동작을 확인했다면, W5M2에서는 DataFrame의 스키마, Catalyst 실행 계획, WholeStageCodegen, Shuffle 및 캐시 재사용을 중심으로 Spark SQL 엔진의 최적화 과정을 확인했다.
+남은 Completed Stage는 시간대별·일자별·품질별 세 개의 독립적인 집계와 결과 저장에 필요한 단계다. 시간대별·일자별 출력의 전역 정렬에 추가 Shuffle이 사용되므로, 출력 순서가 필요하지 않다면 정렬 제거를 통해 더 줄일 여지가 있다. 다만 현재 12개 Stage는 정렬된 세 결과를 각각 저장하는 요구를 유지하는 범위에서 합리적인 수준으로 판단했다.
+
+W5M1에서는 RDD의 Lineage와 장애 복구 원리를 중심으로 Spark의 저수준 동작을 확인했다면, W5M2에서는 DataFrame의 스키마, Physical Plan, 부분 집계, Shuffle, AQE, 캐시 재사용을 중심으로 Spark SQL 엔진의 최적화 과정을 확인했다.
 

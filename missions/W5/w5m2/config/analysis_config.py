@@ -11,7 +11,6 @@ INPUT_PATH = (
 )
 ANALYSIS_START_DATE = "2026-02-01"
 ANALYSIS_END_DATE = "2026-03-01"
-CLEANED_OUTPUT_PATH = PROJECT_ROOT / "output" / "cleaned_trips"
 HOURLY_OUTPUT_PATH = PROJECT_ROOT / "output" / "hourly_summary"
 DAILY_OUTPUT_PATH = PROJECT_ROOT / "output" / "daily_summary"
 QUALITY_OUTPUT_PATH = PROJECT_ROOT / "output" / "quality_summary"
