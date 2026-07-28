@@ -580,3 +580,24 @@ AQE는 작은 Shuffle 파티션을 병합하고 초기 계획의 일부 Stage를
 
 W5M1에서는 RDD의 Lineage와 장애 복구 원리를 중심으로 Spark의 저수준 동작을 확인했다면, W5M2에서는 DataFrame의 스키마, Physical Plan, 부분 집계, Shuffle, AQE, 캐시 재사용을 중심으로 Spark SQL 엔진의 최적화 과정을 확인했다.
 
+## 15. 전체 작동 흐름
+
+```text
+공통 준비
+├─ Parquet 입력 확인
+└─ validated_df 계산 및 캐시
+
+hourly_summary
+├─ 시간대별 부분 집계
+├─ 시간대별 최종 집계 및 정렬용 Shuffle
+└─ 시간대 정렬 및 저장
+
+daily_summary
+├─ 일자별 부분 집계
+├─ 일자별 최종 집계 및 정렬용 Shuffle
+└─ 일자 정렬 및 저장
+
+quality_summary
+├─ 품질별 부분 집계
+└─ 품질별 최종 집계 및 저장
+```
