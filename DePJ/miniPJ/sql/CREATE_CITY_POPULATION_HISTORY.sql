@@ -24,10 +24,9 @@ CREATE TABLE IF NOT EXISTS city_population_history (
     resident_rate NUMERIC(6, 3),
     nonresident_rate NUMERIC(6, 3),
 
-    replace_yn CHAR(1),
-    forecast_yn CHAR(1),
+    replace_yn CHAR(1) NOT NULL DEFAULT 'N',
 
-    collected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    collected_at TIMESTAMPTZ NOT NULL,
     loaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     PRIMARY KEY (
@@ -51,17 +50,8 @@ CREATE TABLE IF NOT EXISTS city_population_history (
             (population_min IS NULL OR population_min >= 0)
             AND
             (population_max IS NULL OR population_max >= 0)
-        )
+        ),
+
+    CONSTRAINT chk_city_population_history_replace_yn
+        CHECK (replace_yn IN ('Y', 'N'))
 );
-
-COMMENT ON TABLE city_population_history
-IS '모델 학습용 장소별 실제 관측 인구 이력';
-
-COMMENT ON COLUMN city_population_history.population_time
-IS 'API가 제공한 실제 인구 기준 시각';
-
-COMMENT ON COLUMN city_population_history.collected_at
-IS 'API를 호출한 시각';
-
-COMMENT ON COLUMN city_population_history.loaded_at
-IS 'PostgreSQL에 적재한 시각';
