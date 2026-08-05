@@ -1,0 +1,24 @@
+{
+  "api": {
+    "base_url": "http://openapi.seoul.go.kr:8088",
+    "response_type": "json",
+    "request_service": "tbCycleRentUseDayInfo",
+    "response_key": "cycleRentUseDayInfo",
+    "page_size": 1000,
+    "timeout_seconds": 15,
+    "max_retries": 2,
+    "retry_delay_seconds": 5
+  },
+  "pipeline": {
+    "target_dates": [
+      "20260627",
+      "20260628"
+    ],
+    "sample_ratio": 0.05
+  },
+  "airflow": {
+    "task_retries": 2,
+    "retry_delay_minutes": 1,
+    "max_active_runs": 1
+  }
+}

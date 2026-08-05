@@ -1,0 +1,15 @@
+apache-airflow-providers-mysql
+
+requests
+
+pandas
+
+pyarrow
+
+pymysql
+
+sqlalchemy
+
+python-dotenv
+
+pytest

@@ -1,0 +1,38 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Airflow
+logs/*
+!logs/.gitkeep
+
+# Data
+data/raw/*
+data/silver/*
+data/reject/*
+data/staging/*
+
+# Keep directories
+!data/raw/.gitkeep
+!data/silver/.gitkeep
+!data/reject/.gitkeep
+!data/staging/.gitkeep
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Docker / database local data
+mysql_data/
+airflow_logs/
+
+.env
