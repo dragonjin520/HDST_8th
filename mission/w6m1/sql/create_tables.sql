@@ -72,7 +72,23 @@ CREATE TABLE IF NOT EXISTS bike_usage_silver (
 
     PRIMARY KEY (silver_id),
 
-    UNIQUE KEY uk_silver_record_hash (record_hash),
+    UNIQUE KEY uk_silver_run_record_hash (
+    dag_run_id,
+    record_hash
+    ),
+    UNIQUE KEY uk_raw_run_page_row (
+    dag_run_id,
+    source_date,
+    page_start_index,
+    page_end_index,
+    row_number_in_page
+    ),
+    UNIQUE KEY uk_reject_run_raw_error (
+    dag_run_id,
+    raw_id,
+    error_column,
+    error_reason
+    ),
 
     KEY idx_silver_dag_run_id (dag_run_id),
     KEY idx_silver_rent_dt (rent_dt),
@@ -225,6 +241,30 @@ CREATE TABLE IF NOT EXISTS station_period_usage (
             AND total_distance_m >= 0
             AND total_duration_min >= 0
         )
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 6. Pipeline alert log table 
+-- =========================================================
+CREATE TABLE IF NOT EXISTS pipeline_alert_log (
+    alert_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    dag_id VARCHAR(250) NOT NULL,
+    dag_run_id VARCHAR(250) NOT NULL,
+    task_id VARCHAR(250) NULL,
+    alert_level VARCHAR(30) NOT NULL,
+    error_type VARCHAR(100) NULL,
+    error_message TEXT NOT NULL,
+    target_dates JSON NULL,
+    try_number INT UNSIGNED NULL,
+    created_at DATETIME(6)
+        NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (alert_id),
+    KEY idx_alert_dag_run_id (dag_run_id),
+    KEY idx_alert_task_id (task_id),
+    KEY idx_alert_created_at (created_at)
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci;

@@ -9,16 +9,56 @@
     "max_retries": 2,
     "retry_delay_seconds": 5
   },
+  "database": {
+    "host": "mysql",
+    "port": 3306,
+    "database": "bike_db",
+    "connection_id": "bike_mysql"
+  },
   "pipeline": {
     "target_dates": [
       "20260627",
       "20260628"
     ],
-    "sample_ratio": 0.05
+    "recollection_max_retries": 2
+  },
+  "cleaning": {
+    "required_core_columns": [
+      "RENT_DT",
+      "RENT_ID",
+      "RENT_TYPE",
+      "GENDER_CD",
+      "AGE_TYPE"
+    ],
+    "measurement_columns": [
+      "USE_CNT",
+      "EXER_AMT",
+      "CARBON_AMT",
+      "MOVE_METER",
+      "MOVE_TIME"
+    ],
+    "normalize_gender_to_uppercase": true,
+    "invalid_rent_id_values": [
+      "",
+      "0"
+    ],
+    "negative_measurement_action": "set_null_and_log",
+    "invalid_numeric_action": "set_null_and_log"
+  },
+  "quality": {
+    "sample_ratio": 0.05,
+    "sample_random_seed": 42,
+    "max_sample_violation_count": 0,
+    "fail_on_schema_mismatch": true
   },
   "airflow": {
-    "task_retries": 2,
+    "task_retries": 3,
     "retry_delay_minutes": 1,
-    "max_active_runs": 1
+    "retry_exponential_backoff": true,
+    "max_retry_delay_minutes": 4,
+    "max_active_runs": 1,
+    "collection_timeout_minutes": 15,
+    "default_timeout_minutes": 5,
+    "quality_sla_minutes": 5
   }
 }
