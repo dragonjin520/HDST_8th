@@ -8,5 +8,5 @@ main브랜치의 Lectures/
 
 ## 주차 별 과제
 ```text
-과제 별 브랜치
+과제 별 브랜치의 missions/
 ```
