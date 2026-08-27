@@ -3,5 +3,10 @@
 
 ## Lectures
 ```text
-Lectures/
+main브랜치의 Lectures/
+```
+
+## 과제
+```text
+과제 별 브랜치
 ```
