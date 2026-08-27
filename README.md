@@ -25,8 +25,15 @@ https://github.com/dragonjin520/DA-Project.git
 ```
 
 ## DE_PROJECT
-de 프로젝트를 정리한 내용
+de 프로젝트를 진행하면서 정리한 confluence 주소
 
 ```text
 https://umbokdong.atlassian.net/wiki/spaces/UBD/overview?homepageId=721072
+```
+
+
+실제 코드와 정리된 내용이 있는 github 주소
+
+```text
+https://github.com/softeerbootcamp-8th/DE_team2-GangnamguUmBokDong.git
 ```
