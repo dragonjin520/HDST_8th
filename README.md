@@ -32,3 +32,7 @@ https://umbokdong.atlassian.net/wiki/x/sAAL
 ```text
 https://github.com/softeerbootcamp-8th/DE_team2-GangnamguUmBokDong.git
 ```
+- fork
+```text
+https://github.com/dragonjin520/DE_team2-GangnamguUmBokDong
+```
