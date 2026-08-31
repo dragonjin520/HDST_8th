@@ -1,1 +1,12 @@
-https://github.com/dragonjin520/HDST_8th/tree/main/Lectures
+## 주차별 폴더
+Lectures 폴더 각 주차에서 공부한 정리 내용 및 수업 자료
+
+## 목록
+
+![W1](./W1)
+![W2](./W2)
+![W3](./W3)
+![W4](./W4)
+![W5](./W5)
+![W6](./W6)
+![W7](./W7)
