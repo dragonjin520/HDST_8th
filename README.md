@@ -15,22 +15,13 @@
 ```
 
 ## DA_PROJECT 브랜치
-- da 프로젝트을 정리한 git 주소
+- da 프로젝트를 fork한 git 주소
 ```text
 https://github.com/dragonjin520/DA-Project.git
 ```
 
 ## DE_PROJECT 브랜치
-- de 프로젝트를 진행하면서 사용한 confluence 주소
-```text
-https://umbokdong.atlassian.net/wiki/x/sAAL
-```
-
-- 실제 코드와 README가 있는 github 주소
-```text
-https://github.com/softeerbootcamp-8th/DE_team2-GangnamguUmBokDong.git
-```
-- fork
+- de 프로젝트를 fork한 git 주소
 ```text
 https://github.com/dragonjin520/DE_team2-GangnamguUmBokDong
 ```
